@@ -1,0 +1,20 @@
+{
+  "names": {
+    "0": "car",
+    "1": "truck",
+    "2": "bus",
+    "3": "van",
+    "4": "freight_car"
+  },
+  "aliases": {
+    "feright car": "freight_car",
+    "feright_car": "freight_car",
+    "feright": "freight_car",
+    "truvk": "truck",
+    "freight car": "freight_car"
+  },
+  "unknown_policy": "quarantine_both_modalities",
+  "point_policy": "quarantine_both_modalities",
+  "box_policy": "axis_aligned_box_to_four_vertices",
+  "polygon_policy": "order_convex_vertices_preserve_coordinates"
+}

@@ -1,0 +1,13 @@
+# DroneVehicle Thermal(红外)单模态数据集配置
+path: ../data/DroneVehicle
+train: train/IR
+val: val/IR
+
+nc: 5
+
+names:
+  0: car
+  1: bus
+  2: truck
+  3: van
+  4: freight_car

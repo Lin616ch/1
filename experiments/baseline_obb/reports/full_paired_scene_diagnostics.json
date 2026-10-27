@@ -1,0 +1,98 @@
+[
+  {
+    "modality": "rgb",
+    "id": "00522",
+    "ground_truth": 9,
+    "predictions": 9,
+    "TP": 9,
+    "FP": 0,
+    "FN": 0,
+    "confidence": 0.25,
+    "matching": "greedy_same_class_polygon_IoU_0.5",
+    "scope": "official_test"
+  },
+  {
+    "modality": "rgb",
+    "id": "01428",
+    "ground_truth": 12,
+    "predictions": 13,
+    "TP": 10,
+    "FP": 3,
+    "FN": 2,
+    "confidence": 0.25,
+    "matching": "greedy_same_class_polygon_IoU_0.5",
+    "scope": "official_test"
+  },
+  {
+    "modality": "rgb",
+    "id": "06935",
+    "ground_truth": 28,
+    "predictions": 30,
+    "TP": 26,
+    "FP": 4,
+    "FN": 2,
+    "confidence": 0.25,
+    "matching": "greedy_same_class_polygon_IoU_0.5",
+    "scope": "official_test"
+  },
+  {
+    "modality": "rgb",
+    "id": "08961",
+    "ground_truth": 9,
+    "predictions": 10,
+    "TP": 9,
+    "FP": 1,
+    "FN": 0,
+    "confidence": 0.25,
+    "matching": "greedy_same_class_polygon_IoU_0.5",
+    "scope": "official_test"
+  },
+  {
+    "modality": "thermal",
+    "id": "00522",
+    "ground_truth": 9,
+    "predictions": 9,
+    "TP": 9,
+    "FP": 0,
+    "FN": 0,
+    "confidence": 0.25,
+    "matching": "greedy_same_class_polygon_IoU_0.5",
+    "scope": "official_test"
+  },
+  {
+    "modality": "thermal",
+    "id": "01428",
+    "ground_truth": 12,
+    "predictions": 12,
+    "TP": 10,
+    "FP": 2,
+    "FN": 2,
+    "confidence": 0.25,
+    "matching": "greedy_same_class_polygon_IoU_0.5",
+    "scope": "official_test"
+  },
+  {
+    "modality": "thermal",
+    "id": "06935",
+    "ground_truth": 27,
+    "predictions": 28,
+    "TP": 26,
+    "FP": 2,
+    "FN": 1,
+    "confidence": 0.25,
+    "matching": "greedy_same_class_polygon_IoU_0.5",
+    "scope": "official_test"
+  },
+  {
+    "modality": "thermal",
+    "id": "08961",
+    "ground_truth": 11,
+    "predictions": 12,
+    "TP": 11,
+    "FP": 1,
+    "FN": 0,
+    "confidence": 0.25,
+    "matching": "greedy_same_class_polygon_IoU_0.5",
+    "scope": "official_test"
+  }
+]

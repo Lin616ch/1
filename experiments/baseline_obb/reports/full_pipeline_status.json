@@ -1,0 +1,21 @@
+{
+  "status": "completed",
+  "stage": "all_deliverables_verified",
+  "completed_stages": [
+    "train_rgb",
+    "train_thermal",
+    "test_rgb",
+    "test_thermal"
+  ],
+  "pid": 3432,
+  "updated_utc": "2026-10-19T15:14:41.780356+00:00",
+  "presentation_pending": false,
+  "visual_review_pending": false,
+  "completed_utc": "2026-10-19T15:14:41.780356+00:00",
+  "final_review": "reports/final_review.json",
+  "comparison_epochs": 60,
+  "actual_training_epochs": {
+    "rgb": 80,
+    "thermal": 60
+  }
+}

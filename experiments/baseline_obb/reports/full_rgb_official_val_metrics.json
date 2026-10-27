@@ -1,0 +1,69 @@
+{
+  "summary": {
+    "modality": "rgb",
+    "phase": "full",
+    "split": "official_val",
+    "status": "completed",
+    "precision": 0.7703623027352299,
+    "recall": 0.7178977103256322,
+    "mAP50": 0.771999530706301,
+    "mAP50_95": 0.6004178026266233,
+    "initial_weight_sha256": "fa6e4cd2691f132875c143135affaa66b5d89394ebb1d07d19770a9b6382c1b8",
+    "run_dir": "C:\\Users\\32073\\Documents\\Codex\\2026-10-18\\dronevehicle-rgb-thermal-d-train-1\\outputs\\dronevehicle_baselines\\runs\\full_rgb_val_evaluation_2",
+    "evaluation": "Ultralytics OBB ProbIoU similarity; AP thresholds 0.50:0.05:0.95; not official DroneVehicle/DOTA polygon evaluator",
+    "comparison_epochs": 60,
+    "actual_training_epochs": 80,
+    "schedule_epochs": 100,
+    "selection_record": "reports/rgb_prefix60_selection.json",
+    "evaluated_targets_per_class": [
+      18923,
+      1332,
+      751,
+      696,
+      709
+    ]
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "name": "car",
+      "precision": 0.9154279067431005,
+      "recall": 0.9048248163610422,
+      "AP50": 0.9583171683665456,
+      "AP50_95": 0.7623336225235426
+    },
+    {
+      "class_id": 1,
+      "name": "truck",
+      "precision": 0.7468908021961088,
+      "recall": 0.6491016053438072,
+      "AP50": 0.7380168228314317,
+      "AP50_95": 0.5573611502337024
+    },
+    {
+      "class_id": 2,
+      "name": "bus",
+      "precision": 0.9044704840657327,
+      "recall": 0.9347536617842876,
+      "AP50": 0.9550864721459248,
+      "AP50_95": 0.7782602482584718
+    },
+    {
+      "class_id": 3,
+      "name": "van",
+      "precision": 0.6627297287336162,
+      "recall": 0.5431034482758621,
+      "AP50": 0.6055133677301979,
+      "AP50_95": 0.4673205035143284
+    },
+    {
+      "class_id": 4,
+      "name": "freight_car",
+      "precision": 0.6222925919375913,
+      "recall": 0.557705019863162,
+      "AP50": 0.6030638224574054,
+      "AP50_95": 0.43681348860307107
+    }
+  ],
+  "classes_without_ground_truth": "omitted, never replaced by zero"
+}

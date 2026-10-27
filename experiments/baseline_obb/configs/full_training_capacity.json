@@ -1,0 +1,16 @@
+{
+  "batch": 16,
+  "workers": 4,
+  "amp": false,
+  "selected_using": "official_train_only_throughput_and_dense_object_memory_preflight",
+  "profile_report": "reports/profile_b16_w4.json",
+  "profile_sha256": "cf5c99220a7dfc3088e048895821b116ed74eec1b91c7f9034c496f55cf11c1e",
+  "same_for_both_modalities": true,
+  "epochs": 60,
+  "imgsz": 640,
+  "seed": 42,
+  "initialization": "same official DOTA pretrained checkpoint independently loaded",
+  "schedule_epochs": 100,
+  "epoch_budget_policy": "stop_after_epoch_budget_keep_original_lr_schedule",
+  "budget_change_record": "reports/comparison_budget60_change.json"
+}

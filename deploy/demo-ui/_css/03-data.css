@@ -1,0 +1,605 @@
+/* ==== components.css · Part 3/4 · 数据展示与抽屉（KPI 卡 / 图表容器 / 表格 / 流程条 / 详情抽屉） ==== */
+/* 范围：.kpi-card 套件、#chart-trend / #chart-forecast / #bottom-chart / #signal-diagram、
+   .data-table + .table-wrap、.flow-steps / .flow-step、#detail-drawer 套件。
+   依赖 theme.css 令牌与 .is-hidden（Part 1），本文件不重复定义 :root 与 .is-hidden。
+   本文件内动画关键帧统一使用 p3- 前缀，避免与其它分块重名。 */
+
+
+/* ==========================================================================
+   1. KPI 卡套件（#kpi-cards > .kpi-card）
+   ========================================================================== */
+
+/* 四张卡两列排布：右栏 360px 下每卡约 165px，纵向占用最小 */
+#kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  align-content: start;
+}
+
+.kpi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 8px 10px 7px;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-left: 3px solid var(--c-primary-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease),
+              transform var(--dur-fast) var(--ease);
+}
+.kpi-card:hover {
+  border-color: var(--c-border-strong);
+  border-left-color: var(--c-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* 告警态：红色左标 + 极浅红渐隐底 + 数值转红 */
+.kpi-card.is-alert {
+  border-color: var(--c-border);
+  border-left-color: var(--c-danger);
+  background: linear-gradient(90deg, var(--c-danger-weak) 0, var(--c-panel) 62%);
+}
+.kpi-card.is-alert:hover { border-left-color: var(--c-danger); }
+.kpi-card.is-alert .kpi-value b { color: var(--c-danger); }
+.kpi-card.is-alert .kpi-foot { color: var(--c-text-sub); }
+
+/* 选中 / 加载态（§3.1，作用于本块元素） */
+.kpi-card.is-selected {
+  border-color: var(--c-primary);
+  border-left-color: var(--c-primary);
+  box-shadow: var(--focus-ring);
+}
+.kpi-card.is-loading { animation: p3-breathe 1.6s var(--ease) infinite; }
+
+@keyframes p3-breathe {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .62; }
+}
+
+/* ---------- 卡头：指标名 + 环比 ---------- */
+.kpi-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+.kpi-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--c-text-sub);
+}
+.kpi-trend {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  font-family: var(--font-num);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text-dim);
+  background: var(--c-bg-sub);
+}
+.kpi-trend::before { font-size: 8px; line-height: 1; content: "\2013"; }
+.kpi-trend.is-up {
+  color: var(--c-success);
+  background: var(--c-success-weak);
+}
+.kpi-trend.is-up::before { content: "\25B2"; }
+.kpi-trend.is-down {
+  color: var(--c-danger);
+  background: var(--c-danger-weak);
+}
+.kpi-trend.is-down::before { content: "\25BC"; }
+.kpi-trend.is-flat { color: var(--c-text-dim); background: var(--c-bg-sub); }
+
+/* ---------- 主数值：b 大号数字 + i 小号单位 ---------- */
+.kpi-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+.kpi-value b {
+  font-family: var(--font-num);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text);
+}
+.kpi-value i {
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--c-text-dim);
+  white-space: nowrap;
+}
+
+/* ---------- 迷你图容器：固定 34px，ECharts/静态 SVG 都靠它拿尺寸 ---------- */
+.kpi-spark {
+  position: relative;
+  flex: none;
+  width: 100%;
+  height: 34px;
+  min-height: 34px;
+  max-height: 34px;
+  overflow: hidden;
+}
+.kpi-spark > svg,
+.kpi-spark > canvas,
+.kpi-spark > div {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.kpi-spark polyline {
+  fill: none;
+  stroke: var(--c-primary);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.kpi-card.is-alert .kpi-spark polyline { stroke: var(--c-danger); }
+
+/* ---------- 卡脚 ---------- */
+.kpi-foot {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+  color: var(--c-text-dim);
+}
+
+
+/* ==========================================================================
+   2. 图表容器（ECharts 挂载点）
+   —— 必须 flex:1 + 明确 min-height，否则容器高度为 0，ECharts 无法渲染
+   ========================================================================== */
+#chart-trend,
+#chart-forecast,
+#bottom-chart,
+#signal-diagram {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+/* 右栏两图：父面板 min-height 150（含 38px 面板头）→ 取 104px 兜底，不与父级抢高 */
+#chart-trend,
+#chart-forecast { min-height: 104px; }
+/* 底栏图表区：layout.css 已给 120px，此处显式重申 */
+#bottom-chart,
+#signal-diagram { min-height: 120px; }
+
+#signal-diagram > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 空状态占位（JS 塞入内容后 :empty 自动失效） */
+#chart-trend:empty::before,
+#chart-forecast:empty::before,
+#bottom-chart:empty::before,
+#signal-diagram:empty::before {
+  content: "暂无数据";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  letter-spacing: .04em;
+  text-align: center;
+  color: var(--c-text-dim);
+  pointer-events: none;
+}
+/* 优先使用 HTML 上写好的占位文案 */
+#chart-trend[data-empty]:empty::before,
+#chart-forecast[data-empty]:empty::before,
+#bottom-chart[data-empty]:empty::before,
+#signal-diagram[data-empty]:empty::before {
+  content: attr(data-empty);
+}
+
+
+/* ==========================================================================
+   3. 数据表格 .data-table（斑马纹 + 粘性表头 + 数值列右对齐）
+   ========================================================================== */
+.table-wrap {
+  width: 100%;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  /* 刻意不设 overflow：让 thead 的 sticky 相对 .drawer-body 滚动容器生效 */
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: separate;   /* collapse 下 sticky 表头边框会丢失 */
+  border-spacing: 0;
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text-sub);
+  background: var(--c-panel);
+}
+
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 6px 8px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: right;            /* 数值列右对齐 */
+  white-space: nowrap;
+  color: var(--c-text-sub);
+  background: var(--c-bg-sub);
+  border-bottom: 1px solid var(--c-border);
+}
+.data-table thead th:first-child {
+  text-align: left;
+  border-radius: var(--radius-md) 0 0 0;
+}
+.data-table thead th:last-child {
+  border-radius: 0 var(--radius-md) 0 0;
+}
+
+.data-table tbody td {
+  padding: 5px 8px;             /* 紧凑行高 */
+  line-height: 1.4;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.data-table tbody tr:nth-child(even) td { background: var(--c-bg-sub); }  /* 斑马纹 */
+.data-table tbody tr:hover td { background: var(--c-hover); }
+
+.data-table tbody tr.is-selected td { background: var(--c-primary-weak); color: var(--c-text); }
+.data-table tbody tr.is-selected td:first-child { box-shadow: inset 2px 0 0 var(--c-primary); }
+.data-table tbody tr.is-alert td:first-child { box-shadow: inset 2px 0 0 var(--c-danger); }
+
+.data-table tbody tr:last-child td { border-bottom: 0; }
+.data-table tbody tr:last-child td:first-child { border-radius: 0 0 0 var(--radius-md); }
+.data-table tbody tr:last-child td:last-child { border-radius: 0 0 var(--radius-md) 0; }
+
+.data-table caption {
+  padding: 6px 8px;
+  font-size: var(--fs-xs);
+  text-align: left;
+  color: var(--c-text-dim);
+}
+
+
+/* ==========================================================================
+   4. 流程条 .flow-steps / .flow-step（抽屉内路段历史链条）
+   ========================================================================== */
+.flow-steps {
+  --_gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--_gap);
+  margin: 0 0 var(--space-3);
+  padding: 2px 0 0 2px;
+}
+
+.flow-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 14px minmax(36px, max-content) minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--space-2);
+  min-width: 0;
+}
+/* 连接线：位于序号点列，向下贯穿行间距 */
+.flow-step::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 15px;
+  bottom: calc((var(--_gap) + 2px) * -1);
+  width: 2px;
+  border-radius: 1px;
+  background: var(--c-border);
+}
+.flow-step:last-child::before { display: none; }
+.flow-step.is-done::before {
+  background: var(--road-free);
+  opacity: .5;
+}
+.flow-step.is-active::before {
+  background: repeating-linear-gradient(180deg, var(--c-border-strong) 0 4px, transparent 4px 8px);
+}
+
+.flow-dot {
+  grid-column: 1;
+  position: relative;
+  z-index: 1;
+  width: 12px;
+  height: 12px;
+  margin-top: 2px;
+  border: 2px solid var(--c-border-strong);
+  border-radius: 50%;
+  background: var(--c-panel);
+}
+.flow-step.is-done .flow-dot {
+  border-color: var(--c-success);
+  background: var(--c-success);
+}
+.flow-step.is-active .flow-dot {
+  border-color: var(--c-primary);
+  background: var(--c-primary);
+  box-shadow: 0 0 0 3px var(--c-primary-weak);
+  animation: p3-flow-pulse 2.4s var(--ease) infinite;
+}
+.flow-step.is-disabled .flow-dot { border-color: var(--c-border); }
+
+@keyframes p3-flow-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--c-primary-weak); }
+  50%      { box-shadow: 0 0 0 5px var(--c-primary-weak); }
+}
+
+.flow-steps .flow-step > time {
+  grid-column: 2;
+  padding-top: 1px;
+  font-family: var(--font-num);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.6;
+  white-space: nowrap;
+  color: var(--c-text-dim);
+}
+.flow-steps .flow-step > p {
+  grid-column: 3;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--c-text-sub);
+}
+.flow-steps .flow-step > p b { font-weight: 700; }
+.flow-steps .flow-step.is-done > p { color: var(--c-text-dim); }
+.flow-steps .flow-step.is-active > p { color: var(--c-text); }
+.flow-steps .flow-step:not(.is-done):not(.is-active) > p { color: var(--c-text-dim); }
+
+
+/* ==========================================================================
+   5. 详情抽屉 #detail-drawer
+   ========================================================================== */
+#detail-drawer {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  box-shadow: -6px 0 20px var(--c-shadow), -2px 0 6px var(--c-shadow);
+  transform: translateX(100%);
+  /* fixed 元素不受 #app overflow:hidden 裁切，且 right 还留了 --gutter 内缩；
+     故用 visibility 兜底，避免收起时右侧漏出 12px 白边与阴影 */
+  visibility: hidden;
+  transition: transform var(--dur-slow) var(--ease),
+              visibility var(--dur-slow) var(--ease);
+  will-change: transform;
+}
+/* 顶部主色标识线（与顶栏 / 底栏呼应；z-index 需高于 .drawer-head 底色） */
+#detail-drawer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: linear-gradient(90deg, var(--c-primary) 0, var(--c-accent) 42%, transparent 100%);
+  pointer-events: none;
+}
+#detail-drawer:not(.is-open) { pointer-events: none; }
+#detail-drawer.is-open {
+  transform: translateX(0);
+  visibility: visible;
+}
+#detail-drawer.is-loading .drawer-body {
+  opacity: .55;
+  animation: p3-breathe 1.6s var(--ease) infinite;
+}
+
+/* 遮罩（index.html 当前未提供该元素，保留备用） */
+#drawer-mask,
+.drawer-mask {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-drawer) - 1);
+  background: var(--c-mask);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-base) var(--ease), visibility var(--dur-base) var(--ease);
+}
+#drawer-mask.is-open,
+.drawer-mask.is-open { opacity: 1; visibility: visible; }
+
+/* ---------- 抽屉头 ---------- */
+.drawer-head {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 12px 12px 11px 14px;
+  background: var(--c-panel-head);
+  border-bottom: 1px solid var(--c-border);
+}
+#drawer-title {
+  min-width: 0;
+  padding-left: 7px;
+  border-left: 3px solid var(--c-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-base);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--c-text);
+}
+#drawer-close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  color: var(--c-text-dim);
+  transition: color var(--dur-fast) var(--ease),
+              background-color var(--dur-fast) var(--ease);
+}
+#drawer-close:hover {
+  color: var(--c-danger);
+  background: var(--c-danger-weak);
+}
+#drawer-close:active { transform: scale(.94); }
+
+/* ---------- 抽屉主体：内部滚动 ---------- */
+.drawer-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: 12px 14px 16px;
+  font-size: var(--fs-sm);
+  color: var(--c-text-sub);
+}
+.drawer-body.is-loading { animation: p3-breathe 1.6s var(--ease) infinite; }
+
+/* 指标徽标行 */
+.drawer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--c-border);
+}
+.drawer-meta-time {
+  margin-left: auto;
+  font-family: var(--font-num);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text-dim);
+}
+
+/* 指标网格（.kv-grid 为 index.html 样板；.metric-grid 为 JS 可能使用的通用结构） */
+.kv-grid,
+.drawer-body .metric-grid,
+.drawer-body .metric-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+.kv,
+.drawer-body .metric-grid > *,
+.drawer-body .metric-row > * {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 7px 10px 8px;
+  background: var(--c-bg-sub);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+}
+.kv > span,
+.drawer-body .metric-grid > * > span,
+.drawer-body .metric-row > * > span {
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  color: var(--c-text-dim);
+}
+.kv > b,
+.drawer-body .metric-grid > * > b,
+.drawer-body .metric-row > * > b {
+  font-family: var(--font-num);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text);
+}
+.kv > b small {
+  margin-left: 3px;
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--c-text-dim);
+}
+
+/* 抽屉内小标题（只作用于抽屉内部，不写全局 h4） */
+.drawer-body h4,
+.drawer-body .drawer-sec {
+  margin: var(--space-4) 0 var(--space-2);
+  padding-left: 8px;
+  border-left: 3px solid var(--c-primary);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: .02em;
+  color: var(--c-text);
+}
+.drawer-body > h4:first-child,
+.drawer-body > .drawer-sec:first-child { margin-top: 0; }
+
+/* 通用纹理：段落 / 网格 / 列表 */
+.drawer-body p {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--c-text-sub);
+}
+.drawer-body ul:not(.flow-steps),
+.drawer-body .plain-list {
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+.drawer-body ul:not(.flow-steps) > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 5px 0;
+  font-size: var(--fs-sm);
+  color: var(--c-text-sub);
+  border-bottom: 1px dashed var(--c-border);
+}
+.drawer-body ul:not(.flow-steps) > li:last-child { border-bottom: 0; }

@@ -1,0 +1,33 @@
+{
+  "python": "3.11.5 (tags/v3.11.5:cce6ba9, Aug 24 2023, 14:38:34) [MSC v.1936 64 bit (AMD64)]",
+  "executable": "C:\\Users\\32073\\Documents\\Codex\\2026-10-18\\dronevehicle-rgb-thermal-d-train-1\\work\\venv\\Scripts\\python.exe",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "torch": "2.7.1+cu128",
+  "torchvision": "0.22.1+cu128",
+  "torch_cuda": "12.8",
+  "ultralytics": "8.3.200",
+  "opencv": "4.12.0",
+  "numpy": "2.2.6",
+  "pillow": "11.3.0",
+  "cuda_available": true,
+  "nvidia_smi": "name, memory.total [MiB], memory.free [MiB], driver_version\nNVIDIA GeForce RTX 5060 Laptop GPU, 8151 MiB, 7722 MiB, 582.05\n",
+  "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "compute_capability": [
+    12,
+    0
+  ],
+  "compiled_arches": [
+    "sm_50",
+    "sm_60",
+    "sm_61",
+    "sm_70",
+    "sm_75",
+    "sm_80",
+    "sm_86",
+    "sm_90",
+    "sm_100",
+    "sm_120"
+  ],
+  "cuda_forward_backward_passed": true,
+  "gpu_memory_bytes": 8546484224
+}

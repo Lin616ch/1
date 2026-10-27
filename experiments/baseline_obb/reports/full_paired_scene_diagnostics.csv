@@ -1,0 +1,9 @@
+﻿modality,id,ground_truth,predictions,TP,FP,FN,confidence,matching,scope
+rgb,00522,9,9,9,0,0,0.25,greedy_same_class_polygon_IoU_0.5,official_test
+rgb,01428,12,13,10,3,2,0.25,greedy_same_class_polygon_IoU_0.5,official_test
+rgb,06935,28,30,26,4,2,0.25,greedy_same_class_polygon_IoU_0.5,official_test
+rgb,08961,9,10,9,1,0,0.25,greedy_same_class_polygon_IoU_0.5,official_test
+thermal,00522,9,9,9,0,0,0.25,greedy_same_class_polygon_IoU_0.5,official_test
+thermal,01428,12,12,10,2,2,0.25,greedy_same_class_polygon_IoU_0.5,official_test
+thermal,06935,27,28,26,2,1,0.25,greedy_same_class_polygon_IoU_0.5,official_test
+thermal,08961,11,12,11,1,0,0.25,greedy_same_class_polygon_IoU_0.5,official_test

@@ -1,0 +1,325 @@
+/* ==========================================================================
+   云澜市城市交通网络大数据平台 · layout.css
+   应用外壳栅格 / 区域定位 / 响应式断点
+   --------------------------------------------------------------------------
+   1920×1080 基准栅格：
+     ┌──────────────────────── topbar 64 ────────────────────────┐
+     │ left 320 │ 12 │      stage (1fr)       │ 12 │ right 360   │
+     │          │    ├────────────────────────┤    │             │
+     │          │    │   bottombar 210        │    │             │
+     └──────────────────────── 外边距 12 ─────────────────────────┘
+   左右栏贯通全高（992px），底栏只占中间列，保证舞台最大化且四栏不重叠。
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. 应用外壳
+   ========================================================================== */
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-width: 1024px;
+  min-height: 640px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: var(--topbar-h) minmax(0, 1fr) var(--bottombar-h);
+  grid-template-areas:
+    "top   top    top"
+    "left  stage  right"
+    "left  bottom right";
+  column-gap: var(--gutter);
+  row-gap: var(--gutter);
+  padding: 0 var(--gutter) var(--gutter);
+  background:
+    radial-gradient(1200px 520px at 50% -180px, rgba(26, 95, 180, .07), transparent 70%),
+    var(--c-bg);
+}
+
+
+/* ==========================================================================
+   2. 顶栏
+   ========================================================================== */
+#topbar {
+  grid-area: top;
+  position: relative;
+  z-index: var(--z-panel);
+  margin: 0 calc(var(--gutter) * -1);   /* 顶栏出血到屏幕左右边缘 */
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-width: 0;
+  background: var(--c-panel);
+  border-bottom: 1px solid var(--c-border);
+  box-shadow: var(--shadow-sm);
+}
+/* 顶栏底部主色细线（政务风标识线） */
+#topbar::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg,
+    var(--c-primary) 0, var(--c-primary) 22%,
+    var(--c-accent) 22%, var(--c-accent) 23.5%,
+    transparent 23.5%);
+  pointer-events: none;
+}
+
+
+/* ==========================================================================
+   3. 左右栏（rail）
+   ========================================================================== */
+.rail {
+  position: relative;
+  z-index: var(--z-panel);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+  transition: width var(--dur-slow) var(--ease);
+}
+#sidebar-left  { grid-area: left;  width: var(--left-w); }
+#sidebar-right { grid-area: right; width: var(--right-w); }
+
+/* 左栏：图层面板吸收剩余高度 */
+#sidebar-left > .panel[data-panel="layers"] { flex: 1 1 auto; min-height: 160px; }
+#sidebar-left > .panel[data-panel="region"] { flex: 0 1 auto; min-height: 120px; }
+#sidebar-left > .panel[data-panel="view"]   { flex: 0 1 auto; min-height: 140px; }
+
+/* 右栏：KPI 与排行按内容，两个图表平分剩余 */
+#sidebar-right > .panel[data-panel="kpi"]      { flex: 0 0 auto; }
+#sidebar-right > .panel[data-panel="trend"],
+#sidebar-right > .panel[data-panel="forecast"] { flex: 1 1 0; min-height: 150px; }
+#sidebar-right > .panel[data-panel="rank"]     { flex: 0 1 auto; min-height: 140px; }
+
+/* ---------- 折叠态 .is-collapsed：收为 56px 图标条 ---------- */
+.rail.is-collapsed { width: var(--rail-mini-w); }
+.rail.is-collapsed > .panel {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+.rail.is-collapsed .panel-head {
+  height: auto;
+  padding: 14px 0;
+  justify-content: center;
+}
+.rail.is-collapsed .panel-title { padding-left: 0; justify-content: center; }
+.rail.is-collapsed .panel-title::before { display: none; }
+.rail.is-collapsed .panel-title > span,
+.rail.is-collapsed .panel-tools,
+.rail.is-collapsed .panel-body { display: none; }
+.rail.is-collapsed .panel-ico {
+  width: 20px;
+  height: 20px;
+  color: var(--c-primary);
+}
+
+
+/* ==========================================================================
+   4. 3D 舞台
+   ========================================================================== */
+#stage {
+  grid-area: stage;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--c-border);
+  box-shadow: var(--shadow-sm);
+  /* 无 JS 时的浅色天空 → 地面兜底（Three.js 画布覆盖其上） */
+  background: linear-gradient(180deg,
+    var(--stage-sky-top) 0%,
+    var(--stage-sky-bottom) 52%,
+    var(--stage-ground) 52.2%,
+    var(--stage-ground) 100%);
+}
+/* 兜底的透视地面网格（仅在画布未挂载时可见） */
+#stage::before {
+  content: "";
+  position: absolute;
+  left: -40%; right: -40%;
+  top: 52%; bottom: -60%;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--stage-grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--stage-grid-major) 1px, transparent 1px),
+    linear-gradient(var(--stage-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--stage-grid) 1px, transparent 1px);
+  background-size: 200px 200px, 200px 200px, 40px 40px, 40px 40px;
+  transform: perspective(600px) rotateX(62deg);
+  transform-origin: 50% 0;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 30%);
+          mask-image: linear-gradient(180deg, transparent 0, #000 30%);
+  pointer-events: none;
+}
+
+#canvas-host {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-canvas);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* 不设 background：由 Three.js 渲染 */
+}
+#canvas-host > canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+#map-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-overlay);
+  pointer-events: none;          /* 透传到画布 */
+}
+#map-overlay > * { pointer-events: auto; }
+#map-overlay > #view-hint { pointer-events: none; }
+
+#tooltip {
+  position: absolute;            /* 相对 #stage；JS 设 left/top（舞台局部 px） */
+  left: 0;
+  top: 0;
+  z-index: calc(var(--z-overlay) + 5);
+}
+
+
+/* ==========================================================================
+   5. 底栏
+   ========================================================================== */
+#bottombar {
+  grid-area: bottom;
+  position: relative;
+  z-index: var(--z-panel);
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: clamp(340px, 36%, 440px) minmax(0, 1fr);
+  grid-template-rows: 32px minmax(0, 1fr) 44px;
+  grid-template-areas:
+    "tabs     chart"
+    "metrics  chart"
+    "timeline timeline";
+  column-gap: var(--space-4);
+  row-gap: var(--space-2);
+  padding: 10px 14px 10px;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+/* 顶部 3px 主色标题条 */
+#bottombar::before {
+  content: "";
+  position: absolute;
+  left: 14px; top: -1px;
+  width: 64px; height: 3px;
+  border-radius: 0 0 2px 2px;
+  background: var(--c-primary);
+}
+
+#module-tabs { grid-area: tabs; min-width: 0; }
+#module-body { display: contents; }     /* 子元素直接参与底栏栅格 */
+#module-metrics { grid-area: metrics; min-height: 0; }
+#bottom-chart,
+#signal-diagram {
+  grid-area: chart;
+  position: relative;
+  min-width: 0;
+  min-height: 120px;
+  height: 100%;
+}
+#signal-diagram { z-index: 1; background: var(--c-panel); }
+
+#timeline-row { grid-area: timeline; min-width: 0; }
+
+
+/* ==========================================================================
+   6. 浮层：抽屉 / 提示 / 加载
+   ========================================================================== */
+#detail-drawer {
+  position: fixed;
+  top: calc(var(--topbar-h) + var(--gutter));
+  right: var(--gutter);
+  bottom: var(--gutter);
+  width: var(--drawer-w);
+  max-width: calc(100vw - 24px);
+  z-index: var(--z-drawer);
+}
+
+#toast-host {
+  position: fixed;
+  top: calc(var(--topbar-h) + var(--gutter) + 12px);
+  right: calc(var(--right-w) + var(--gutter) * 2 + 12px);
+  z-index: var(--z-toast);
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+#toast-host > * { pointer-events: auto; }
+
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loading);
+}
+
+
+/* ==========================================================================
+   7. 响应式断点
+   ========================================================================== */
+
+/* ≥1600：完整三栏（默认值即为该档） */
+
+/* 1600–1919：略收窄 */
+@media (max-width: 1919px) {
+  :root {
+    --left-w: 304px;
+    --right-w: 344px;
+  }
+}
+
+/* 1280–1599：左右栏收窄 */
+@media (max-width: 1599px) {
+  :root {
+    --left-w: 272px;
+    --right-w: 312px;
+    --gutter: 10px;
+    --drawer-w: 360px;
+  }
+  #topbar { gap: 16px; padding: 0 16px; }
+  .brand-sub { display: none; }
+  #weather-chip em { display: none; }
+}
+
+/* <1280：左右栏可通过 .is-collapsed 折叠为 56px 图标条 */
+@media (max-width: 1279px) {
+  :root {
+    --left-w: 240px;
+    --right-w: 280px;
+    --gutter: 8px;
+    --bottombar-h: 200px;
+  }
+  .brand-title { font-size: 17px; }
+  #weather-chip { display: none; }
+  #bottombar { grid-template-columns: 320px minmax(0, 1fr); }
+}
+
+/* 低高度屏（如 1366×768 / 1600×900） */
+@media (max-height: 900px) {
+  :root { --bottombar-h: 196px; }
+}
+@media (max-height: 760px) {
+  :root { --topbar-h: 56px; --bottombar-h: 184px; }
+  .brand-sub { display: none; }
+}

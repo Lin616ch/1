@@ -1,0 +1,7 @@
+﻿split,modality,status,source_images,exported_images,quarantined_pairs,objects,car,truck,bus,van,freight_car
+train,rgb,processed,17990,17957,33,285717,245740,13650,10394,7265,8668
+train,thermal,processed,17990,17957,33,315290,269347,15798,11307,7690,11148
+val,rgb,processed,1469,1467,2,22411,18923,1332,751,696,709
+val,thermal,processed,1469,1467,2,24440,20547,1466,789,721,917
+test,rgb,processed,8980,8955,25,141883,122704,7094,4158,3958,3969
+test,thermal,processed,8980,8955,25,158094,135669,8631,4464,4280,5050

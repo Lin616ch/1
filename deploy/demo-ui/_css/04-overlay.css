@@ -1,0 +1,612 @@
+/* ==== components.css · Part 4/4 · 时间轴与浮层 ==== */
+/* ==========================================================================
+   Part 4：时间轴整组（#timeline-row）/ #tooltip / .toast / #nav-compass / #view-hint
+   --------------------------------------------------------------------------
+   约定：
+   - 颜色一律取 theme.css 的 :root 令牌，不新增全局令牌（仅局部 --_fill 由 JS 写入）
+   - 层级只用 var(--z-overlay) / var(--z-toast)
+   - 半透明底用「伪元素 + opacity」实现，避免硬编码 rgba()
+   - #timeline-row 的外壳定位（grid-area）与 #tooltip / #toast-host 的定位由 layout.css 提供，
+     本文件只补组件内部样式与必要强化
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. 时间轴整组 #timeline-row
+   ========================================================================== */
+#timeline-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  height: 100%;
+  padding-top: 3px;
+  border-top: 1px solid var(--c-border);
+}
+
+/* ---------- 1.1 播放 / 暂停主按钮 #btn-play ---------- */
+#btn-play {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: var(--c-panel);
+  box-shadow: var(--shadow-sm);
+  transition:
+    background var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+#btn-play svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+#btn-play svg path,
+#btn-play svg rect,
+#btn-play svg circle,
+#btn-play svg polygon {
+  fill: currentColor;   /* JS 换成暂停条（rect / path）时同样保持白色 */
+}
+#btn-play:hover {
+  background: var(--c-primary-deep);
+  box-shadow: var(--shadow-md);
+}
+#btn-play:active { transform: scale(.94); }
+
+/* 播放中：深主色 + 克制的呼吸脉冲 */
+#btn-play.is-playing {
+  background: var(--c-primary-deep);
+  animation: ov-play-pulse 1800ms var(--ease) infinite;
+}
+#btn-play.is-playing svg { fill: currentColor; }
+
+/* ---------- 1.2 倍速分段控件 #speed-group ---------- */
+#speed-group {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: stretch;
+  height: 28px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-panel);
+  overflow: hidden;
+}
+#speed-group button[data-speed] {
+  min-width: 40px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-num);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text-sub);
+  background: transparent;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+#speed-group button[data-speed] + button[data-speed] { border-left: 1px solid var(--c-border); }
+#speed-group button[data-speed]:hover { background: var(--c-hover); color: var(--c-text); }
+#speed-group button[data-speed].is-active {
+  background: var(--c-primary-weak);
+  color: var(--c-primary-deep);
+  font-weight: 700;
+}
+#speed-group button[data-speed].is-active:hover { background: var(--c-primary-soft); }
+#speed-group button[data-speed]:disabled { background: transparent; }
+
+/* ---------- 1.3 当前时刻 #timeline-label ---------- */
+#timeline-label {
+  flex: 0 0 auto;
+  min-width: 62px;
+  height: 28px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-bg-sub);
+  font-family: var(--font-num);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--c-text);
+  letter-spacing: .4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 1.4 24 小时路况热力条 #timeline-track ---------- */
+#timeline-track {
+  flex: 1.4 1 300px;
+  min-width: 200px;
+  height: 22px;
+  padding: 2px;
+  display: flex;
+  align-items: stretch;
+  gap: 1px;                       /* 格与格之间 1px 间隙 */
+  position: relative;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-bg-sub);
+  overflow: visible;              /* 允许 hover 放大溢出 */
+}
+
+.tl-cell {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--road-nodata, #a9b3c1);   /* 默认兜底；JS 内联 background 会覆盖 */
+  cursor: pointer;
+  transition:
+    transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+/* 五档配色：data-level="0..4"。内联 style 优先级更高，JS 可直接写色 */
+.tl-cell[data-level="0"] { background: var(--road-nodata, #a9b3c1); }   /* 无数据 */
+.tl-cell[data-level="1"] { background: var(--road-free,   #1fa463); }   /* 畅通 */
+.tl-cell[data-level="2"] { background: var(--road-slow,   #f2b705); }   /* 缓行 */
+.tl-cell[data-level="3"] { background: var(--road-jam,    #f06a0f); }   /* 拥堵 */
+.tl-cell[data-level="4"] { background: var(--road-block,  #c81e3a); }   /* 严重拥堵 */
+
+/* 当前时刻高亮（JS 与 slider / label 同步） */
+.tl-cell.is-active,
+.tl-cell.is-current {
+  z-index: 3;
+  box-shadow:
+    0 0 0 1px var(--c-panel),
+    0 0 0 2px var(--c-primary);
+}
+
+/* hover：纵向放大 + 提升层级 */
+.tl-cell:hover {
+  z-index: 4;
+  transform: scaleY(1.35);
+  box-shadow: 0 2px 6px var(--c-shadow);
+}
+
+/* ---------- 1.5 时间滑块 input#timeline-slider ---------- */
+#timeline-slider {
+  flex: 1 1 240px;
+  min-width: 140px;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+          appearance: none;        /* 必须写在 input 本身，伪元素才能完全自定义 */
+}
+
+/* --- WebKit / Blink：轨道 --- */
+#timeline-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  /* 兜底：不支持多段色标语法时，轨道底仍可见 */
+  background-color: var(--c-border, #e2e8f0);
+  /* --_fill 由 JS 写入 input 的 style，伪元素继承，形如 '38%'；缺省 0% 时轨道全为描边色 */
+  background-image: linear-gradient(to right,
+    var(--c-primary) 0 var(--_fill, 0%),
+    var(--c-border) var(--_fill, 0%) 100%);
+}
+
+/* --- WebKit / Blink：滑块 --- */
+#timeline-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+          appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;                    /* (6 - 16) / 2，纵向居中 */
+  border: 2px solid var(--c-primary);
+  border-radius: 50%;
+  background: var(--c-panel);
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+  transition:
+    box-shadow var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+#timeline-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px var(--c-primary-weak);
+}
+#timeline-slider:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  transform: scale(1.12);
+  box-shadow: var(--focus-ring);
+}
+
+/* --- Firefox：轨道 / 已滑过段 / 滑块 --- */
+#timeline-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--c-border, #e2e8f0);
+  background-image: linear-gradient(to right,
+    var(--c-primary) 0 var(--_fill, 0%),
+    var(--c-border) var(--_fill, 0%) 100%);
+}
+/* Firefox 原生进度段：--_fill 缺失时仍能显示已滑过进度，颜色一致不会突兀 */
+#timeline-slider::-moz-range-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--c-primary);
+}
+#timeline-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--c-primary);
+  border-radius: 50%;
+  background: var(--c-panel);
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+  transition: box-shadow var(--dur-fast) var(--ease);
+}
+#timeline-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 0 4px var(--c-primary-weak);
+}
+#timeline-slider::-moz-focus-outer { border: 0; }
+
+
+/* ==========================================================================
+   2. #tooltip —— 跟随鼠标的信息浮层（定位与 z-index 见 layout.css）
+   ========================================================================== */
+#tooltip {
+  z-index: calc(var(--z-overlay) + 5);
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 14px));
+  min-width: 150px;
+  max-width: 280px;
+  padding: 8px 10px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  background: var(--c-panel);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--c-text);
+  overflow-wrap: break-word;
+  will-change: transform;
+}
+
+/* 底部小三角箭头 */
+#tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  background: var(--c-panel);
+  border-right: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+  transform: rotate(45deg);
+}
+
+#tooltip-title {
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--c-border);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--c-text);
+}
+
+#tooltip-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tt-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--c-text-dim);
+}
+.tt-row > b {
+  font-family: var(--font-num);
+  font-weight: 700;
+  color: var(--c-text);
+  font-variant-numeric: tabular-nums;
+}
+/* 覆盖上面的 b 颜色，保证语义色可用 */
+.tt-row > b.is-bad  { color: var(--c-danger); }
+.tt-row > b.is-good { color: var(--c-success); }
+
+
+/* ==========================================================================
+   3. #toast-host / .toast —— 右上角滑入通知
+   （右上固定定位、宽度、排布由 layout.css 提供，此处只强化层级与穿透）
+   ========================================================================== */
+#toast-host {
+  z-index: var(--z-toast);
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: 9px 11px;
+  border: 1px solid var(--c-border);
+  border-left: 3px solid var(--c-text-dim);
+  border-radius: var(--radius-md);
+  background: var(--c-panel);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--c-text);
+  animation: ov-toast-in var(--dur-base) var(--ease) both;
+}
+
+.toast--ok   { border-left-color: var(--c-success); }
+.toast--warn { border-left-color: var(--c-warn); }
+.toast--err  { border-left-color: var(--c-danger); }
+.toast--info { border-left-color: var(--c-info); }
+
+/* 可选子元素：JS 插图标 / 文本 / 关闭按钮时自动生效，缺失也不影响 */
+.toast-ico {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: var(--c-text-dim);
+}
+.toast-ico > svg,
+.toast > svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.toast--ok   .toast-ico, .toast--ok   > svg { color: var(--c-success); }
+.toast--warn .toast-ico, .toast--warn > svg { color: var(--c-warn); }
+.toast--err  .toast-ico, .toast--err  > svg { color: var(--c-danger); }
+.toast--info .toast-ico, .toast--info > svg { color: var(--c-info); }
+
+.toast-text,
+.toast-msg {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.toast-close {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  border-radius: var(--radius-sm);
+  color: var(--c-text-dim);
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+.toast-close:hover { background: var(--c-hover); color: var(--c-text); }
+
+
+/* ==========================================================================
+   4. #nav-compass —— 圆形指北针
+   ========================================================================== */
+#nav-compass {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  pointer-events: auto;
+}
+
+.compass-dial {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 1px solid var(--c-border);
+  box-shadow: var(--shadow-sm);
+}
+/* 半透明白底盘（伪元素 + opacity，避免硬编码 rgba） */
+.compass-dial::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 50%;
+  background: var(--c-panel);
+  opacity: .86;
+}
+/* 环形刻度：repeating-conic-gradient + 径向遮罩 */
+.compass-dial::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  z-index: 1;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg,
+    var(--c-border-strong) 0deg 0.7deg,
+    transparent 0.7deg 15deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 0 66%, #000 67%);
+          mask-image: radial-gradient(circle, transparent 0 66%, #000 67%);
+  pointer-events: none;
+}
+/* 底盘内容都必须定位，才能盖在伪元素之上 */
+.compass-dial > * { position: relative; z-index: 2; }
+
+.compass-mark {
+  position: absolute;
+  font-family: var(--font-num);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--c-text-dim);
+}
+.compass-mark--n {
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--c-danger);
+}
+.compass-mark--s {
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.compass-mark--e {
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+}
+.compass-mark--w {
+  top: 50%;
+  left: 6px;
+  transform: translateY(-50%);
+}
+
+/* JS 只写 style.transform = 'rotate(Xdeg)'，因此原点必须在正中心 */
+#nav-compass svg#compass-needle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;   /* 硬要求：绕中心旋转，写错会绕角落转 */
+  will-change: transform;
+}
+#nav-compass svg#compass-needle .needle-n { fill: var(--c-danger); }
+#nav-compass svg#compass-needle .needle-s { fill: var(--c-text-dim); }
+#nav-compass svg#compass-needle .needle-hub {
+  fill: var(--c-panel);
+  stroke: var(--c-border-strong);
+  stroke-width: 1.2;
+}
+
+#compass-pitch {
+  display: inline-block;
+  padding: 1px 7px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-panel);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-num);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--c-text-sub);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* ==========================================================================
+   5. #view-hint —— 舞台底部居中操作提示条
+   ========================================================================== */
+#view-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  z-index: 2;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: calc(100% - 220px);   /* 避让左下 / 右下角浮层 */
+  padding: 6px 14px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--fs-sm);
+  color: var(--c-text-sub);
+  white-space: nowrap;
+  pointer-events: none;            /* 完全不拦截画布交互 */
+  user-select: none;
+}
+/* 半透明底（令牌 + opacity，文字本身保持不透明） */
+#view-hint::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: var(--c-panel);
+  opacity: .82;
+}
+#view-hint > .hint-item { position: relative; z-index: 1; }
+
+.hint-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 纯 CSS 鼠标图标：外框 + 按键高亮点 */
+.hint-mouse {
+  position: relative;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 19px;
+  border: 1.5px solid var(--c-border-strong);
+  border-radius: 8px;
+  background: var(--c-panel);
+}
+.hint-mouse::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  width: 3px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--c-border-strong);
+}
+.hint-mouse--l::before { left: 2.5px; background: var(--c-primary); }
+.hint-mouse--m::before {
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--c-primary);
+}
+.hint-mouse--r::before { right: 2.5px; background: var(--c-primary); }
+
+#view-hint kbd {
+  display: inline-block;
+  min-width: 15px;
+  padding: 0 4px;
+  border: 1px solid var(--c-border);
+  border-radius: 3px;
+  background: var(--c-bg-sub);
+  font-family: var(--font-num);
+  font-size: var(--fs-xs);
+  line-height: 16px;
+  text-align: center;
+  color: var(--c-text-sub);
+}
+
+
+/* ==========================================================================
+   6. 关键帧
+   ========================================================================== */
+@keyframes ov-play-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--c-primary-soft); }
+  70%  { box-shadow: 0 0 0 9px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@keyframes ov-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

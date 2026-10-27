@@ -1,0 +1,10 @@
+path: "C:/Users/32073/Documents/Codex/2026-10-18/dronevehicle-rgb-thermal-d-train-1/outputs/dronevehicle_baselines/data/rgb"
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: car
+  1: truck
+  2: bus
+  3: van
+  4: freight_car

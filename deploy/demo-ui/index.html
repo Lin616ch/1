@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>云澜市城市交通网络大数据平台</title>
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===================================================================
+       顶栏
+       =================================================================== -->
+  <header id="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <rect class="bm-bg" x="1" y="1" width="38" height="38" rx="9"/>
+          <rect class="bm-bld" x="9.5" y="15" width="5.5" height="11" rx="1"/>
+          <rect class="bm-bld bm-bld--hi" x="17.25" y="8.5" width="5.5" height="17.5" rx="1"/>
+          <rect class="bm-bld" x="25" y="18.5" width="5.5" height="7.5" rx="1"/>
+          <path class="bm-road" d="M5.5 32.5C12 27.5 28 27.5 34.5 32.5"/>
+          <circle class="bm-node" cx="20" cy="28.9" r="2.1"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1 class="brand-title">云澜市城市交通网络大数据平台</h1>
+        <p class="brand-sub">YUNLAN URBAN TRAFFIC NETWORK · 综合交通运行监测与决策支持</p>
+      </div>
+    </div>
+
+    <div id="kpi-ticker" aria-label="实时关键指标">
+      <div class="ticker-track">
+        <div class="ticker-item"><span class="ticker-label">路网平均车速</span><span class="ticker-value">28.6<small>km/h</small></span></div>
+        <div class="ticker-item is-alert"><span class="ticker-label">全市拥堵指数</span><span class="ticker-value">1.82</span></div>
+        <div class="ticker-item"><span class="ticker-label">在途车辆</span><span class="ticker-value">41.3<small>万辆</small></span></div>
+        <div class="ticker-item"><span class="ticker-label">公交准点率</span><span class="ticker-value">92.4<small>%</small></span></div>
+        <div class="ticker-item"><span class="ticker-label">地铁进站量</span><span class="ticker-value">186.2<small>万人次</small></span></div>
+        <div class="ticker-item"><span class="ticker-label">共享单车骑行</span><span class="ticker-value">12.7<small>万次</small></span></div>
+        <div class="ticker-item"><span class="ticker-label">泊位空置率</span><span class="ticker-value">23.6<small>%</small></span></div>
+        <div class="ticker-item is-alert"><span class="ticker-label">交通事件</span><span class="ticker-value">37<small>起</small></span></div>
+        <!-- 复制一组用于无缝循环 -->
+        <div class="ticker-item" aria-hidden="true"><span class="ticker-label">路网平均车速</span><span class="ticker-value">28.6<small>km/h</small></span></div>
+        <div class="ticker-item is-alert" aria-hidden="true"><span class="ticker-label">全市拥堵指数</span><span class="ticker-value">1.82</span></div>
+        <div class="ticker-item" aria-hidden="true"><span class="ticker-label">在途车辆</span><span class="ticker-value">41.3<small>万辆</small></span></div>
+        <div class="ticker-item" aria-hidden="true"><span class="ticker-label">公交准点率</span><span class="ticker-value">92.4<small>%</small></span></div>
+        <div class="ticker-item" aria-hidden="true"><span class="ticker-label">地铁进站量</span><span class="ticker-value">186.2<small>万人次</small></span></div>
+        <div class="ticker-item" aria-hidden="true"><span class="ticker-label">共享单车骑行</span><span class="ticker-value">12.7<small>万次</small></span></div>
+        <div class="ticker-item" aria-hidden="true"><span class="ticker-label">泊位空置率</span><span class="ticker-value">23.6<small>%</small></span></div>
+        <div class="ticker-item is-alert" aria-hidden="true"><span class="ticker-label">交通事件</span><span class="ticker-value">37<small>起</small></span></div>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div id="weather-chip" class="chip chip--weather" title="气象">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="8" cy="8" r="3"/>
+          <path d="M8 2.2v1.4M2.2 8h1.4M3.9 3.9l1 1M12.1 3.9l-1 1"/>
+          <path d="M8.5 19.5h8.8a3.8 3.8 0 0 0 0-7.6 5 5 0 0 0-9.5 1.7 3 3 0 0 0 .7 5.9z"/>
+        </svg>
+        <span>多云 18℃</span><em>AQI 42 优</em>
+      </div>
+      <div id="sys-clock">08:30:00</div>
+      <div id="sys-date">2025-06-18　星期三</div>
+      <button id="btn-theme" class="icon-btn" type="button" title="切换主题" aria-label="切换主题">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.5"/>
+          <path class="i-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z"/>
+        </svg>
+      </button>
+      <button id="btn-fullscreen" class="icon-btn" type="button" title="全屏" aria-label="全屏">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       左栏
+       =================================================================== -->
+  <aside id="sidebar-left" class="rail">
+
+    <section class="panel" data-panel="layers">
+      <header class="panel-head">
+        <h3 class="panel-title">
+          <svg class="i panel-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg>
+          <span>图层控制</span>
+        </h3>
+        <div class="panel-tools"><span class="tag">8 类图层</span></div>
+      </header>
+      <div class="panel-body" id="layer-list">
+        <label class="layer-item is-active" data-layer="traffic">
+          <span class="layer-icon"><svg class="i" viewBox="0 0 24 24"><path d="M4 20 9 4M20 20 15 4M12 5v2.5M12 10.5V13M12 16v2.5"/></svg></span>
+          <span class="layer-name">实时路况</span>
+          <span class="layer-count">1,284</span>
+          <span class="switch"><i></i></span>
+        </label>
+        <label class="layer-item is-active" data-layer="bus">
+          <span class="layer-icon"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="2.5"/><path d="M5 11h14M8 21v-3M16 21v-3M8.5 14.5h.01M15.5 14.5h.01"/></svg></span>
+          <span class="layer-name">公交线网</span>
+          <span class="layer-count">312</span>
+          <span class="switch"><i></i></span>
+        </label>
+        <label class="layer-item is-active" data-layer="metro">
+          <span class="layer-icon"><svg class="i" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="14" rx="4"/><path d="M6 10h12M9 21l1.5-4M15 21l-1.5-4"/></svg></span>
+          <span class="layer-name">地铁客流</span>
+          <span class="layer-count">186</span>
+          <span class="switch"><i></i></span>
+        </label>
+        <label class="layer-item" data-layer="od">
+          <span class="layer-icon"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="18" r="2"/><circle cx="19" cy="6" r="2"/><path d="M6.6 16.6C8.5 10 12 6.6 16.8 6.1"/></svg></span>
+          <span class="layer-name">OD 出行</span>
+          <span class="layer-count">2,460</span>
+          <span class="switch"><i></i></span>
+        </label>
+        <label class="layer-item" data-layer="heat">
+          <span class="layer-icon"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c3 4 5 6.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5.3 2 1.3 3 2.5 3 0-3-1-5.5.5-8.5z"/></svg></span>
+          <span class="layer-name">拥堵热力</span>
+          <span class="layer-count">96</span>
+          <span class="switch"><i></i></span>
+        </label>
+        <label class="layer-item" data-layer="signal">
+          <span class="layer-icon"><svg class="i" viewBox="0 0 24 24"><rect x="8" y="2.5" width="8" height="19" rx="3"/><circle cx="12" cy="7" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="17" r="1.3"/></svg></span>
+          <span class="layer-name">信号配时</span>
+          <span class="layer-count">428</span>
+          <span class="switch"><i></i></span>
+        </label>
+        <label class="layer-item" data-layer="parking">
+          <span class="layer-icon"><svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M10 17V7h3.2a3 3 0 0 1 0 6H10"/></svg></span>
+          <span class="layer-name">停车场</span>
+          <span class="layer-count">1,052</span>
+          <span class="switch"><i></i></span>
+        </label>
+        <label class="layer-item is-disabled" data-layer="bike">
+          <span class="layer-icon"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-7h5l3 7M10 9 8.6 6H7M15 9l-1-3h2"/></svg></span>
+          <span class="layer-name">共享单车</span>
+          <span class="layer-count">8,736</span>
+          <span class="switch"><i></i></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="region">
+      <header class="panel-head">
+        <h3 class="panel-title">
+          <svg class="i panel-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>
+          <span>行政区筛选</span>
+        </h3>
+        <div class="panel-tools"><span class="panel-meta">道路里程</span></div>
+      </header>
+      <div class="panel-body" id="region-list">
+        <button class="region-item is-active" data-region="all" type="button"><span class="region-name">全市</span><span class="region-value">4,286 km</span></button>
+        <button class="region-item" data-region="center" type="button"><span class="region-name">中心城区</span><span class="region-value">862 km</span></button>
+        <button class="region-item" data-region="riverside" type="button"><span class="region-name">滨江新区</span><span class="region-value">734 km</span></button>
+        <button class="region-item" data-region="hitech" type="button"><span class="region-name">高新园区</span><span class="region-value">645 km</span></button>
+        <button class="region-item" data-region="airport" type="button"><span class="region-name">空港新城</span><span class="region-value">812 km</span></button>
+        <button class="region-item" data-region="east" type="button"><span class="region-name">城东片区</span><span class="region-value">598 km</span></button>
+        <button class="region-item" data-region="south" type="button"><span class="region-name">城南片区</span><span class="region-value">635 km</span></button>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="view">
+      <header class="panel-head">
+        <h3 class="panel-title">
+          <svg class="i panel-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          <span>视角模式</span>
+        </h3>
+        <div class="panel-tools"><span class="panel-meta">快捷键 1–4</span></div>
+      </header>
+      <div class="panel-body" id="view-modes">
+        <button class="view-btn is-active" data-view="orbit" type="button">
+          <span class="view-icon"><svg class="i" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="4.2"/><circle cx="12" cy="12" r="2"/><path d="M17.5 6.3 20 7.6l-1.2 2.5"/></svg></span>
+          <span class="view-text"><b>自由环绕</b><em>拖拽旋转观察</em></span>
+          <kbd class="view-key">1</kbd>
+        </button>
+        <button class="view-btn" data-view="top" type="button">
+          <span class="view-icon"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/></svg></span>
+          <span class="view-text"><b>俯视平面</b><em>正射总览全域路网</em></span>
+          <kbd class="view-key">2</kbd>
+        </button>
+        <button class="view-btn" data-view="bird" type="button">
+          <span class="view-icon"><svg class="i" viewBox="0 0 24 24"><path d="M3 16.5 12 21l9-4.5L12 12z"/><path d="M12 12V3.5M9 6.5l3-3 3 3"/></svg></span>
+          <span class="view-text"><b>斜45°鸟瞰</b><em>片区态势研判</em></span>
+          <kbd class="view-key">3</kbd>
+        </button>
+        <button class="view-btn" data-view="cruise" type="button">
+          <span class="view-icon"><svg class="i" viewBox="0 0 24 24"><path d="M3 19c4-1 5-6 9-7s6-4.5 8.5-7.5"/><path d="M16.5 4.5h4v4"/></svg></span>
+          <span class="view-text"><b>巡航飞行</b><em>沿主干道自动漫游</em></span>
+          <kbd class="view-key">4</kbd>
+        </button>
+      </div>
+    </section>
+  </aside>
+
+  <!-- ===================================================================
+       3D 舞台
+       =================================================================== -->
+  <main id="stage">
+    <div id="canvas-host"></div>
+
+    <div id="map-overlay">
+      <div class="stage-badge">
+        <span class="stage-badge-dot"></span>
+        <b>全市路网 · 实时</b>
+        <em>云澜市 · 6 区 · 4,286 km</em>
+      </div>
+
+      <div id="map-legend">
+        <div class="legend-title">路况图例</div>
+        <div class="legend-item"><span class="legend-swatch legend-swatch--free"></span><span class="legend-text">畅通　&gt; 35 km/h</span></div>
+        <div class="legend-item"><span class="legend-swatch legend-swatch--slow"></span><span class="legend-text">缓行　20–35 km/h</span></div>
+        <div class="legend-item"><span class="legend-swatch legend-swatch--jam"></span><span class="legend-text">拥堵　10–20 km/h</span></div>
+        <div class="legend-item"><span class="legend-swatch legend-swatch--block"></span><span class="legend-text">严重拥堵　&lt; 10 km/h</span></div>
+        <div class="legend-item"><span class="legend-swatch legend-swatch--nodata"></span><span class="legend-text">无数据</span></div>
+        <div class="legend-sep"></div>
+        <div class="legend-item"><span class="legend-swatch legend-swatch--line legend-swatch--metro"></span><span class="legend-text">地铁线路</span></div>
+        <div class="legend-item"><span class="legend-swatch legend-swatch--line legend-swatch--bus"></span><span class="legend-text">公交线网</span></div>
+      </div>
+
+      <div id="nav-compass" title="指北针">
+        <div class="compass-dial">
+          <span class="compass-mark compass-mark--n">N</span>
+          <span class="compass-mark compass-mark--e">E</span>
+          <span class="compass-mark compass-mark--s">S</span>
+          <span class="compass-mark compass-mark--w">W</span>
+          <svg id="compass-needle" viewBox="0 0 44 44" aria-hidden="true">
+            <path class="needle-n" d="M22 5 26.5 22h-9z"/>
+            <path class="needle-s" d="M22 39l-4.5-17h9z"/>
+            <circle class="needle-hub" cx="22" cy="22" r="2.6"/>
+          </svg>
+        </div>
+        <span id="compass-pitch">俯仰 45°</span>
+      </div>
+
+      <div id="view-hint">
+        <span class="hint-item"><i class="hint-mouse hint-mouse--l"></i>左键旋转</span>
+        <span class="hint-item"><i class="hint-mouse hint-mouse--m"></i>滚轮缩放</span>
+        <span class="hint-item"><i class="hint-mouse hint-mouse--r"></i>右键平移</span>
+        <span class="hint-item"><kbd>1</kbd>–<kbd>4</kbd>切换视角</span>
+      </div>
+    </div>
+
+    <div id="tooltip" class="is-hidden" role="tooltip">
+      <div id="tooltip-title">中山路（解放路—人民路）</div>
+      <div id="tooltip-body">
+        <div class="tt-row"><span>平均车速</span><b>12.4 km/h</b></div>
+        <div class="tt-row"><span>拥堵指数</span><b class="is-bad">2.8</b></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===================================================================
+       右栏
+       =================================================================== -->
+  <aside id="sidebar-right" class="rail">
+
+    <section class="panel" data-panel="kpi">
+      <header class="panel-head">
+        <h3 class="panel-title">
+          <svg class="i panel-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></svg>
+          <span>运行总览</span>
+        </h3>
+        <div class="panel-tools"><span class="live-dot"></span><span class="panel-meta">实时 · 每 10 秒刷新</span></div>
+      </header>
+      <div class="panel-body" id="kpi-cards">
+        <article class="kpi-card">
+          <div class="kpi-head"><span class="kpi-label">路网平均速度</span><span class="kpi-trend is-up">+2.4%</span></div>
+          <div class="kpi-value"><b>28.6</b><i>km/h</i></div>
+          <div class="kpi-spark" data-spark="speed"><svg viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,24 12,22 24,25 36,18 48,20 60,14 72,16 84,11 96,13 108,8 120,10"/></svg></div>
+          <div class="kpi-foot">较昨日同期</div>
+        </article>
+        <article class="kpi-card is-alert">
+          <div class="kpi-head"><span class="kpi-label">全市拥堵指数</span><span class="kpi-trend is-down">+6.1%</span></div>
+          <div class="kpi-value"><b>1.82</b><i>中度</i></div>
+          <div class="kpi-spark" data-spark="tpi"><svg viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,26 12,25 24,22 36,23 48,18 60,15 72,12 84,14 96,9 108,10 120,6"/></svg></div>
+          <div class="kpi-foot">较昨日同期</div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-head"><span class="kpi-label">公交准点率</span><span class="kpi-trend is-up">+1.2%</span></div>
+          <div class="kpi-value"><b>92.4</b><i>%</i></div>
+          <div class="kpi-spark" data-spark="bus"><svg viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,18 12,16 24,19 36,15 48,16 60,13 72,15 84,12 96,13 108,11 120,12"/></svg></div>
+          <div class="kpi-foot">较上周同期</div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-head"><span class="kpi-label">地铁进站量</span><span class="kpi-trend is-up">+3.8%</span></div>
+          <div class="kpi-value"><b>186.2</b><i>万人次</i></div>
+          <div class="kpi-spark" data-spark="metro"><svg viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,28 12,27 24,20 36,8 48,12 60,19 72,21 84,20 96,14 108,9 120,15"/></svg></div>
+          <div class="kpi-foot">今日累计</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel panel--chart" data-panel="trend">
+      <header class="panel-head">
+        <h3 class="panel-title">
+          <svg class="i panel-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+          <span>拥堵指数趋势</span>
+        </h3>
+        <div class="panel-tools"><span class="tag tag--primary">今日</span><span class="tag">昨日</span></div>
+      </header>
+      <div class="panel-body" id="chart-trend" data-empty="24 小时拥堵指数曲线加载中…"></div>
+    </section>
+
+    <section class="panel panel--chart" data-panel="forecast">
+      <header class="panel-head">
+        <h3 class="panel-title">
+          <svg class="i panel-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2"/></svg>
+          <span>未来 1 小时预测</span>
+        </h3>
+        <div class="panel-tools"><span class="badge badge--ok">置信度 92%</span></div>
+      </header>
+      <div class="panel-body" id="chart-forecast" data-empty="短时预测模型推理中…"></div>
+    </section>
+
+    <section class="panel" data-panel="rank">
+      <header class="panel-head">
+        <h3 class="panel-title">
+          <svg class="i panel-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 16.5V21M7 3.5h10V9a5 5 0 0 1-10 0z"/><path d="M7 5.5H4.2A3 3 0 0 0 7 10M17 5.5h2.8A3 3 0 0 1 17 10"/></svg>
+          <span>拥堵走廊排行</span>
+        </h3>
+        <div class="panel-tools"><span class="panel-meta">拥堵指数 TOP 6</span></div>
+      </header>
+      <div class="panel-body" id="corridor-rank">
+        <ol class="rank-list">
+          <li class="rank-item is-alert"><span class="rank-no">01</span><span class="rank-name">中山路走廊</span><span class="rank-bar"><i style="width:93%"></i></span><span class="rank-value">2.8</span></li>
+          <li class="rank-item is-alert"><span class="rank-no">02</span><span class="rank-name">滨江大道</span><span class="rank-bar"><i style="width:83%"></i></span><span class="rank-value">2.5</span></li>
+          <li class="rank-item"><span class="rank-no">03</span><span class="rank-name">环城北路</span><span class="rank-bar"><i style="width:77%"></i></span><span class="rank-value">2.3</span></li>
+          <li class="rank-item"><span class="rank-no">04</span><span class="rank-name">高新大道</span><span class="rank-bar"><i style="width:70%"></i></span><span class="rank-value">2.1</span></li>
+          <li class="rank-item"><span class="rank-no">05</span><span class="rank-name">机场快速路</span><span class="rank-bar"><i style="width:63%"></i></span><span class="rank-value">1.9</span></li>
+          <li class="rank-item"><span class="rank-no">06</span><span class="rank-name">建设南路</span><span class="rank-bar"><i style="width:57%"></i></span><span class="rank-value">1.7</span></li>
+        </ol>
+      </div>
+    </section>
+  </aside>
+
+  <!-- ===================================================================
+       底栏：模块 + 时间轴
+       =================================================================== -->
+  <footer id="bottombar">
+    <nav id="module-tabs" aria-label="业务模块">
+      <button class="tab is-active" data-module="road" type="button">路网运行</button>
+      <button class="tab" data-module="bus" type="button">公交运营</button>
+      <button class="tab" data-module="metro" type="button">轨道客流</button>
+      <button class="tab" data-module="od" type="button">OD 出行</button>
+      <button class="tab" data-module="signal" type="button">信号配时</button>
+      <button class="tab" data-module="parking" type="button">静态停车</button>
+    </nav>
+
+    <div id="module-body">
+      <div id="module-metrics">
+        <div class="mini-card"><span class="mini-label">监测路段</span><b class="mini-value">1,284</b><em class="mini-unit">段</em></div>
+        <div class="mini-card"><span class="mini-label">平均车速</span><b class="mini-value">28.6</b><em class="mini-unit">km/h</em></div>
+        <div class="mini-card is-alert"><span class="mini-label">拥堵里程</span><b class="mini-value">86.4</b><em class="mini-unit">km</em></div>
+        <div class="mini-card"><span class="mini-label">交通事件</span><b class="mini-value">37</b><em class="mini-unit">起</em></div>
+      </div>
+      <div id="bottom-chart" data-empty="分时段路网运行图表加载中…"></div>
+      <div id="signal-diagram" class="is-hidden"></div>
+    </div>
+
+    <div id="timeline-row">
+      <button id="btn-play" type="button" title="播放 / 暂停" aria-label="播放">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.8v12.4L18.6 12z"/></svg>
+      </button>
+      <div id="speed-group" role="group" aria-label="回放倍速">
+        <button type="button" data-speed="1" class="is-active">1×</button>
+        <button type="button" data-speed="2">2×</button>
+        <button type="button" data-speed="4">4×</button>
+        <button type="button" data-speed="8">8×</button>
+      </div>
+      <div id="timeline-label">08:30</div>
+      <input id="timeline-slider" type="range" min="0" max="1439" step="1" value="510" style="--_fill:35.44%" aria-label="时间轴">
+      <div id="timeline-track">
+        <div class="tl-cell" data-level="1" title="00:00"></div>
+        <div class="tl-cell" data-level="1" title="00:10"></div>
+        <div class="tl-cell" data-level="1" title="00:20"></div>
+        <div class="tl-cell" data-level="1" title="00:30"></div>
+        <div class="tl-cell" data-level="1" title="00:40"></div>
+        <div class="tl-cell" data-level="1" title="00:50"></div>
+        <div class="tl-cell" data-level="1" title="01:00"></div>
+        <div class="tl-cell" data-level="1" title="01:10"></div>
+        <div class="tl-cell" data-level="1" title="01:20"></div>
+        <div class="tl-cell" data-level="1" title="01:30"></div>
+        <div class="tl-cell" data-level="1" title="01:40"></div>
+        <div class="tl-cell" data-level="1" title="01:50"></div>
+        <div class="tl-cell" data-level="1" title="02:00"></div>
+        <div class="tl-cell" data-level="1" title="02:10"></div>
+        <div class="tl-cell" data-level="1" title="02:20"></div>
+        <div class="tl-cell" data-level="1" title="02:30"></div>
+        <div class="tl-cell" data-level="1" title="02:40"></div>
+        <div class="tl-cell" data-level="1" title="02:50"></div>
+        <div class="tl-cell" data-level="0" title="03:00"></div>
+        <div class="tl-cell" data-level="0" title="03:10"></div>
+        <div class="tl-cell" data-level="0" title="03:20"></div>
+        <div class="tl-cell" data-level="1" title="03:30"></div>
+        <div class="tl-cell" data-level="1" title="03:40"></div>
+        <div class="tl-cell" data-level="1" title="03:50"></div>
+        <div class="tl-cell" data-level="1" title="04:00"></div>
+        <div class="tl-cell" data-level="1" title="04:10"></div>
+        <div class="tl-cell" data-level="1" title="04:20"></div>
+        <div class="tl-cell" data-level="1" title="04:30"></div>
+        <div class="tl-cell" data-level="1" title="04:40"></div>
+        <div class="tl-cell" data-level="1" title="04:50"></div>
+        <div class="tl-cell" data-level="1" title="05:00"></div>
+        <div class="tl-cell" data-level="1" title="05:10"></div>
+        <div class="tl-cell" data-level="1" title="05:20"></div>
+        <div class="tl-cell" data-level="1" title="05:30"></div>
+        <div class="tl-cell" data-level="1" title="05:40"></div>
+        <div class="tl-cell" data-level="1" title="05:50"></div>
+        <div class="tl-cell" data-level="1" title="06:00"></div>
+        <div class="tl-cell" data-level="1" title="06:10"></div>
+        <div class="tl-cell" data-level="1" title="06:20"></div>
+        <div class="tl-cell" data-level="2" title="06:30"></div>
+        <div class="tl-cell" data-level="2" title="06:40"></div>
+        <div class="tl-cell" data-level="2" title="06:50"></div>
+        <div class="tl-cell" data-level="3" title="07:00"></div>
+        <div class="tl-cell" data-level="3" title="07:10"></div>
+        <div class="tl-cell" data-level="3" title="07:20"></div>
+        <div class="tl-cell" data-level="4" title="07:30"></div>
+        <div class="tl-cell" data-level="4" title="07:40"></div>
+        <div class="tl-cell" data-level="4" title="07:50"></div>
+        <div class="tl-cell" data-level="4" title="08:00"></div>
+        <div class="tl-cell" data-level="4" title="08:10"></div>
+        <div class="tl-cell" data-level="4" title="08:20"></div>
+        <div class="tl-cell" data-level="4" title="08:30"></div>
+        <div class="tl-cell" data-level="4" title="08:40"></div>
+        <div class="tl-cell" data-level="4" title="08:50"></div>
+        <div class="tl-cell" data-level="3" title="09:00"></div>
+        <div class="tl-cell" data-level="3" title="09:10"></div>
+        <div class="tl-cell" data-level="3" title="09:20"></div>
+        <div class="tl-cell" data-level="3" title="09:30"></div>
+        <div class="tl-cell" data-level="3" title="09:40"></div>
+        <div class="tl-cell" data-level="2" title="09:50"></div>
+        <div class="tl-cell" data-level="2" title="10:00"></div>
+        <div class="tl-cell" data-level="2" title="10:10"></div>
+        <div class="tl-cell" data-level="2" title="10:20"></div>
+        <div class="tl-cell" data-level="2" title="10:30"></div>
+        <div class="tl-cell" data-level="2" title="10:40"></div>
+        <div class="tl-cell" data-level="2" title="10:50"></div>
+        <div class="tl-cell" data-level="1" title="11:00"></div>
+        <div class="tl-cell" data-level="1" title="11:10"></div>
+        <div class="tl-cell" data-level="1" title="11:20"></div>
+        <div class="tl-cell" data-level="1" title="11:30"></div>
+        <div class="tl-cell" data-level="1" title="11:40"></div>
+        <div class="tl-cell" data-level="1" title="11:50"></div>
+        <div class="tl-cell" data-level="2" title="12:00"></div>
+        <div class="tl-cell" data-level="2" title="12:10"></div>
+        <div class="tl-cell" data-level="2" title="12:20"></div>
+        <div class="tl-cell" data-level="2" title="12:30"></div>
+        <div class="tl-cell" data-level="2" title="12:40"></div>
+        <div class="tl-cell" data-level="2" title="12:50"></div>
+        <div class="tl-cell" data-level="2" title="13:00"></div>
+        <div class="tl-cell" data-level="2" title="13:10"></div>
+        <div class="tl-cell" data-level="2" title="13:20"></div>
+        <div class="tl-cell" data-level="1" title="13:30"></div>
+        <div class="tl-cell" data-level="1" title="13:40"></div>
+        <div class="tl-cell" data-level="1" title="13:50"></div>
+        <div class="tl-cell" data-level="1" title="14:00"></div>
+        <div class="tl-cell" data-level="1" title="14:10"></div>
+        <div class="tl-cell" data-level="1" title="14:20"></div>
+        <div class="tl-cell" data-level="1" title="14:30"></div>
+        <div class="tl-cell" data-level="1" title="14:40"></div>
+        <div class="tl-cell" data-level="1" title="14:50"></div>
+        <div class="tl-cell" data-level="1" title="15:00"></div>
+        <div class="tl-cell" data-level="1" title="15:10"></div>
+        <div class="tl-cell" data-level="1" title="15:20"></div>
+        <div class="tl-cell" data-level="1" title="15:30"></div>
+        <div class="tl-cell" data-level="1" title="15:40"></div>
+        <div class="tl-cell" data-level="1" title="15:50"></div>
+        <div class="tl-cell" data-level="1" title="16:00"></div>
+        <div class="tl-cell" data-level="1" title="16:10"></div>
+        <div class="tl-cell" data-level="1" title="16:20"></div>
+        <div class="tl-cell" data-level="2" title="16:30"></div>
+        <div class="tl-cell" data-level="2" title="16:40"></div>
+        <div class="tl-cell" data-level="2" title="16:50"></div>
+        <div class="tl-cell" data-level="3" title="17:00"></div>
+        <div class="tl-cell" data-level="3" title="17:10"></div>
+        <div class="tl-cell" data-level="3" title="17:20"></div>
+        <div class="tl-cell" data-level="4" title="17:30"></div>
+        <div class="tl-cell" data-level="4" title="17:40"></div>
+        <div class="tl-cell" data-level="4" title="17:50"></div>
+        <div class="tl-cell" data-level="4" title="18:00"></div>
+        <div class="tl-cell" data-level="4" title="18:10"></div>
+        <div class="tl-cell" data-level="4" title="18:20"></div>
+        <div class="tl-cell" data-level="4" title="18:30"></div>
+        <div class="tl-cell" data-level="4" title="18:40"></div>
+        <div class="tl-cell" data-level="3" title="18:50"></div>
+        <div class="tl-cell" data-level="3" title="19:00"></div>
+        <div class="tl-cell" data-level="3" title="19:10"></div>
+        <div class="tl-cell" data-level="3" title="19:20"></div>
+        <div class="tl-cell" data-level="2" title="19:30"></div>
+        <div class="tl-cell" data-level="2" title="19:40"></div>
+        <div class="tl-cell" data-level="2" title="19:50"></div>
+        <div class="tl-cell" data-level="2" title="20:00"></div>
+        <div class="tl-cell" data-level="2" title="20:10"></div>
+        <div class="tl-cell" data-level="2" title="20:20"></div>
+        <div class="tl-cell" data-level="2" title="20:30"></div>
+        <div class="tl-cell" data-level="2" title="20:40"></div>
+        <div class="tl-cell" data-level="2" title="20:50"></div>
+        <div class="tl-cell" data-level="1" title="21:00"></div>
+        <div class="tl-cell" data-level="1" title="21:10"></div>
+        <div class="tl-cell" data-level="1" title="21:20"></div>
+        <div class="tl-cell" data-level="1" title="21:30"></div>
+        <div class="tl-cell" data-level="1" title="21:40"></div>
+        <div class="tl-cell" data-level="1" title="21:50"></div>
+        <div class="tl-cell" data-level="1" title="22:00"></div>
+        <div class="tl-cell" data-level="1" title="22:10"></div>
+        <div class="tl-cell" data-level="1" title="22:20"></div>
+        <div class="tl-cell" data-level="1" title="22:30"></div>
+        <div class="tl-cell" data-level="1" title="22:40"></div>
+        <div class="tl-cell" data-level="1" title="22:50"></div>
+        <div class="tl-cell" data-level="1" title="23:00"></div>
+        <div class="tl-cell" data-level="1" title="23:10"></div>
+        <div class="tl-cell" data-level="1" title="23:20"></div>
+        <div class="tl-cell" data-level="1" title="23:30"></div>
+        <div class="tl-cell" data-level="1" title="23:40"></div>
+        <div class="tl-cell" data-level="1" title="23:50"></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================
+       详情抽屉
+       =================================================================== -->
+  <aside id="detail-drawer" aria-label="详情">
+    <header class="drawer-head">
+      <h3 id="drawer-title">中山路（解放路—人民路）</h3>
+      <button id="drawer-close" class="icon-btn" type="button" title="关闭" aria-label="关闭">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+    <div class="drawer-body" id="drawer-body">
+      <div class="drawer-meta">
+        <span class="badge badge--bad">严重拥堵</span>
+        <span class="tag">主干路</span>
+        <span class="tag">中心城区</span>
+        <span class="drawer-meta-time">更新于 08:30:00</span>
+      </div>
+      <div class="kv-grid">
+        <div class="kv"><span>实时车速</span><b>12.4<small>km/h</small></b></div>
+        <div class="kv"><span>拥堵指数</span><b class="is-bad">2.8</b></div>
+        <div class="kv"><span>路段长度</span><b>2.36<small>km</small></b></div>
+        <div class="kv"><span>小时流量</span><b>3,412<small>pcu</small></b></div>
+      </div>
+      <h4 class="drawer-sec">今日拥堵演变</h4>
+      <ol class="flow-steps">
+        <li class="flow-step is-done"><span class="flow-dot"></span><time>07:10</time><p>车速回落至 32 km/h，进入<b class="t-slow">缓行</b></p></li>
+        <li class="flow-step is-done"><span class="flow-dot"></span><time>07:45</time><p>早高峰到达，转为<b class="t-jam">拥堵</b></p></li>
+        <li class="flow-step is-active"><span class="flow-dot"></span><time>08:20</time><p>人民路口事故，<b class="t-block">严重拥堵</b>持续中</p></li>
+        <li class="flow-step"><span class="flow-dot"></span><time>09:10</time><p>预计疏导完成，恢复缓行</p></li>
+      </ol>
+      <h4 class="drawer-sec">分时段指标</h4>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>时段</th><th>车速 km/h</th><th>流量</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>07:00</td><td>34.2</td><td>2,180</td><td><span class="badge badge--ok">畅通</span></td></tr>
+            <tr><td>07:30</td><td>24.8</td><td>2,960</td><td><span class="badge badge--warn">缓行</span></td></tr>
+            <tr><td>08:00</td><td>16.5</td><td>3,380</td><td><span class="badge badge--warn">拥堵</span></td></tr>
+            <tr class="is-selected"><td>08:30</td><td>12.4</td><td>3,412</td><td><span class="badge badge--bad">严重</span></td></tr>
+            <tr><td>09:00</td><td>18.9</td><td>3,105</td><td><span class="badge badge--warn">拥堵</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </aside>
+
+  <div id="toast-host" aria-live="polite"></div>
+
+  <!-- ===================================================================
+       加载页
+       =================================================================== -->
+  <div id="loading-screen">
+    <div class="loading-card">
+      <div class="loading-logo">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <rect class="bm-bg" x="1" y="1" width="38" height="38" rx="9"/>
+          <rect class="bm-bld" x="9.5" y="15" width="5.5" height="11" rx="1"/>
+          <rect class="bm-bld bm-bld--hi" x="17.25" y="8.5" width="5.5" height="17.5" rx="1"/>
+          <rect class="bm-bld" x="25" y="18.5" width="5.5" height="7.5" rx="1"/>
+          <path class="bm-road" d="M5.5 32.5C12 27.5 28 27.5 34.5 32.5"/>
+          <circle class="bm-node" cx="20" cy="28.9" r="2.1"/>
+        </svg>
+      </div>
+      <h2 class="loading-title">云澜市城市交通网络大数据平台</h2>
+      <p class="loading-sub">综合交通运行监测与决策支持系统</p>
+      <div class="loading-progress"><i class="loading-bar"></i></div>
+      <p class="loading-text">正在构建城市三维场景与路网拓扑…</p>
+      <ul class="loading-steps">
+        <li class="is-done">基础数据</li>
+        <li class="is-active">三维城市</li>
+        <li>路况仿真</li>
+        <li>图表组件</li>
+      </ul>
+    </div>
+    <p class="loading-foot">云澜市交通运输局　·　数据资源中心</p>
+  </div>
+
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="vendor/echarts.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/theme-bridge.js"></script>
+<script src="js/data/city-model.js"></script>
+<script src="js/data/sim-engine.js"></script>
+<script src="js/data/data-api.js"></script>
+<script src="js/three/scene.js"></script>
+<script src="js/three/city-builder.js"></script>
+<script src="js/three/camera-rig.js"></script>
+<script src="js/three/layers.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/ui/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "frozen_before_test_utc": "2026-10-19T15:03:02.473783+00:00",
+  "models": {
+    "rgb": {
+      "best_sha256": "a7723ecf6ce1129c198f7561fccf1650a8b877b45c4659381a6518076de69dc6",
+      "requested_config_sha256": "77b521cb7a7445c1789519728b567d6b98e09062922fc505ba1b3acd7bad0bad",
+      "actual_training_epochs": 80,
+      "comparison_epochs": 60,
+      "selection_record": "reports/rgb_prefix60_selection.json"
+    },
+    "thermal": {
+      "best_sha256": "5f54a6e3680eca20e8764492d3e122aa88e12d5eb7bc2dfcedacc23e0d0f2113",
+      "requested_config_sha256": "931faa8902ec21b77b6599b15de2ac329c28a8dceaf7c771d0cdec2985ba50e8",
+      "actual_training_epochs": 60,
+      "comparison_epochs": 60,
+      "selection_record": null
+    }
+  },
+  "initial_sha256": "fa6e4cd2691f132875c143135affaa66b5d89394ebb1d07d19770a9b6382c1b8",
+  "training_parameter_differences": {
+    "data": [
+      "C:\\Users\\32073\\Documents\\Codex\\2026-10-18\\dronevehicle-rgb-thermal-d-train-1\\outputs\\dronevehicle_baselines\\configs\\rgb.yaml",
+      "C:\\Users\\32073\\Documents\\Codex\\2026-10-18\\dronevehicle-rgb-thermal-d-train-1\\outputs\\dronevehicle_baselines\\configs\\thermal.yaml"
+    ],
+    "name": [
+      "full_rgb",
+      "full_thermal"
+    ]
+  },
+  "comparison_epochs_per_modality": 60,
+  "schedule_epochs": 100,
+  "test_selection_policy": "No test performance has been used to choose model/configuration",
+  "manifest_sha256": "4be03100a9b62d2d81daf19a2c4f514f639651cad3d726c8bcf64a1c3af2ae28"
+}

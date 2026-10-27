@@ -1,0 +1,23 @@
+# 核心深度学习框架
+torch>=2.0.0
+torchvision>=0.15.0
+
+# 图像处理与数据
+opencv-python>=4.5.0
+Pillow>=9.0.0
+numpy>=1.21.0
+scipy>=1.7.0
+
+# 配置与工具
+pyyaml>=6.0
+tqdm>=4.62.0
+einops>=0.6.0
+
+# 可视化
+matplotlib>=3.4.0
+tensorboard>=2.8.0
+
+# 部署加速（可选）
+onnx>=1.13.0
+onnxruntime-gpu>=1.14.0
+# tensorrt 需根据CUDA版本单独安装

@@ -1,0 +1,69 @@
+{
+  "summary": {
+    "modality": "rgb",
+    "phase": "full",
+    "split": "official_test",
+    "status": "completed",
+    "precision": 0.7377513369686858,
+    "recall": 0.7227356048802764,
+    "mAP50": 0.7536676287518395,
+    "mAP50_95": 0.5847815661196454,
+    "initial_weight_sha256": "fa6e4cd2691f132875c143135affaa66b5d89394ebb1d07d19770a9b6382c1b8",
+    "run_dir": "C:\\Users\\32073\\Documents\\Codex\\2026-10-18\\dronevehicle-rgb-thermal-d-train-1\\outputs\\dronevehicle_baselines\\runs\\full_rgb_test_evaluation",
+    "evaluation": "Ultralytics OBB ProbIoU similarity; AP thresholds 0.50:0.05:0.95; not official DroneVehicle/DOTA polygon evaluator",
+    "comparison_epochs": 60,
+    "actual_training_epochs": 80,
+    "schedule_epochs": 100,
+    "selection_record": "reports/rgb_prefix60_selection.json",
+    "evaluated_targets_per_class": [
+      122704,
+      7094,
+      4158,
+      3958,
+      3969
+    ]
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "name": "car",
+      "precision": 0.9171112466399859,
+      "recall": 0.9229018954259024,
+      "AP50": 0.9663992416353269,
+      "AP50_95": 0.7744088086736628
+    },
+    {
+      "class_id": 1,
+      "name": "truck",
+      "precision": 0.7195556379101716,
+      "recall": 0.7228643924443191,
+      "AP50": 0.7520211898543809,
+      "AP50_95": 0.5668425531736057
+    },
+    {
+      "class_id": 2,
+      "name": "bus",
+      "precision": 0.888035727151599,
+      "recall": 0.923234139066202,
+      "AP50": 0.947038794346749,
+      "AP50_95": 0.7422641104534671
+    },
+    {
+      "class_id": 3,
+      "name": "van",
+      "precision": 0.6007245862449816,
+      "recall": 0.5093481556341587,
+      "AP50": 0.5473015361423084,
+      "AP50_95": 0.4215854425052168
+    },
+    {
+      "class_id": 4,
+      "name": "freight_car",
+      "precision": 0.5633294868966909,
+      "recall": 0.5353294418307999,
+      "AP50": 0.5555773817804321,
+      "AP50_95": 0.41880691579227464
+    }
+  ],
+  "classes_without_ground_truth": "omitted, never replaced by zero"
+}

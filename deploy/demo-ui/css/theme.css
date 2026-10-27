@@ -1,0 +1,296 @@
+/* ==========================================================================
+   云澜市城市交通网络大数据平台 · theme.css
+   设计令牌（:root CSS 变量） / Reset / 排版 / 工具类
+   --------------------------------------------------------------------------
+   视觉方向：浅色政务风 —— 白底面板 + 极轻描边 + 柔和阴影 + 政务蓝主色
+   注意：§2 中的变量名由 JS 通过 getComputedStyle 读取，名称严禁改动。
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. 设计令牌
+   ========================================================================== */
+:root {
+  /* ---------- 2.1 基础色 ---------- */
+  --c-bg:             #eef2f7;   /* 页面底色：带一丝蓝的浅灰 */
+  --c-bg-sub:         #f5f7fa;   /* 次级底：表头 / 斑马纹 / 卡片内底 */
+  --c-panel:          #ffffff;   /* 面板底色 */
+  --c-panel-head:     #fbfcfe;   /* 面板标题栏底色（与面板几乎同色，仅靠分隔线区分） */
+  --c-border:         #e2e8f0;   /* 常规描边 */
+  --c-border-strong:  #c3cedc;   /* 强调描边 / hover 描边 */
+  --c-text:           #1c2738;   /* 主文字    对白 15.1:1 */
+  --c-text-sub:       #4a5a6e;   /* 次要文字  对白  7.0:1 */
+  --c-text-dim:       #687588;   /* 弱化文字  对白  4.6:1 */
+  --c-primary:        #1a5fb4;   /* 政务蓝    对白  6.3:1 */
+  --c-primary-weak:   #e8f0fb;   /* 主色浅底（选中态背景） */
+  --c-primary-deep:   #0f4a94;   /* 主色深（hover / 强调）对白 8.9:1 */
+  --c-accent:         #0e9fb5;   /* 辅助青（图形点缀，不用于小字） */
+  --c-success:        #12804a;   /* 成功 / 上升  对白 5.0:1 */
+  --c-warn:           #9a5f00;   /* 警示         对白 5.1:1 */
+  --c-danger:         #c9252c;   /* 危险 / 告警  对白 5.4:1 */
+  --c-info:           #0b7285;   /* 信息         对白 5.3:1 */
+  --c-shadow:         rgba(24, 48, 84, 0.08);
+
+  /* 基础色补充（非契约，组件内部使用） */
+  --c-primary-mid:    #3d7fd6;
+  --c-primary-soft:   #d3e2f7;
+  --c-accent-weak:    #e2f4f7;
+  --c-success-weak:   #e5f4ec;
+  --c-warn-weak:      #fdf3dc;
+  --c-danger-weak:    #fbe9ea;
+  --c-info-weak:      #e1f1f4;
+  --c-hover:          #f3f6fb;
+  --c-mask:           rgba(28, 39, 56, 0.18);
+
+  /* ---------- 2.2 交通语义色（填充 / 3D 路面 / 色块） ---------- */
+  --road-free:        #1fa463;   /* 畅通：偏蓝绿，色盲下与橙区分 */
+  --road-slow:        #f2b705;   /* 缓行：明黄，亮度最高 */
+  --road-jam:         #f06a0f;   /* 拥堵：橙 */
+  --road-block:       #c81e3a;   /* 严重拥堵：深绯红，亮度最低 */
+  --road-nodata:      #a9b3c1;   /* 无数据：中性灰 */
+
+  /* 语义色的「文字安全」版本（白底对比度 ≥ 4.5:1，非契约补充） */
+  --road-free-text:   #12804a;   /* 5.0:1 */
+  --road-slow-text:   #8a6100;   /* 5.5:1 */
+  --road-jam-text:    #b84a00;   /* 5.1:1 */
+  --road-block-text:  #b3122e;   /* 6.9:1 */
+
+  /* ---------- 2.3 3D 舞台专用色 ---------- */
+  --stage-sky-top:    #c6d6ea;   /* 浅灰蓝天空 */
+  --stage-sky-bottom: #edf2f8;   /* 近地平线：近白 */
+  --stage-fog:        #e8eef5;   /* 雾色 ≈ 天空下端，地平线消隐 */
+  --stage-ground:     #f5f7fa;   /* 地面底板：近白 */
+  --stage-grid:       #e0e6ee;   /* 网格细线 */
+  --stage-grid-major: #c9d3df;   /* 网格主线（每 5 格） */
+  --bld-top:          #ffffff;   /* 建筑顶面：纯白 */
+  --bld-side:         #e8edf3;   /* 建筑受光面 */
+  --bld-side-dark:    #cdd6e1;   /* 建筑背光面 */
+  --bld-hi:           #4a86d8;   /* 地标高亮：主色提亮 */
+  --road-casing:      #94a2b5;   /* 道路勾边 */
+  --transit-metro:    #6a4fc3;   /* 地铁默认：紫，避开路况语义色 */
+  --transit-bus:      #0e9fb5;   /* 公交默认：青 */
+  --od-flow:          #3d6fe0;   /* OD 飞线：亮蓝 */
+  --heat-low:         #8cc8f2;   /* 热力低：冷蓝 */
+  --heat-mid:         #f6c343;   /* 热力中：暖黄 */
+  --heat-high:        #e0402f;   /* 热力高：红 */
+
+  /* ---------- 2.4 图表色板 ---------- */
+  --chart-1: #1a5fb4;
+  --chart-2: #12a3b8;
+  --chart-3: #f2a93b;
+  --chart-4: #7a5bd1;
+  --chart-5: #2aa876;
+  --chart-6: #e2627e;
+  --chart-7: #5d9cec;
+  --chart-8: #98a4b5;
+  --metro-1: #d23a4c;   /* 1 号线 绯红 */
+  --metro-2: #1f6fd1;   /* 2 号线 宝蓝 */
+  --metro-3: #6a4fc3;   /* 3 号线 紫 */
+  --metro-4: #0e9aa7;   /* 4 号线 青 */
+  --metro-5: #c77a12;   /* 5 号线 琥珀 */
+
+  /* ---------- 2.5 尺度与动效 ---------- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+
+  --dur-fast: 160ms;
+  --dur-base: 220ms;
+  --dur-slow: 360ms;
+  --ease: cubic-bezier(.4, 0, .2, 1);
+
+  --z-canvas:  0;
+  --z-overlay: 10;
+  --z-panel:   20;
+  --z-drawer:  60;
+  --z-toast:   80;
+  --z-loading: 100;
+
+  --font-ui:  "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC",
+              "Noto Sans CJK SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-num: "Bahnschrift", "DIN Alternate", "DIN Pro", "Roboto Condensed", "Segoe UI",
+              "Helvetica Neue", Arial, ui-monospace, Consolas, monospace;
+
+  /* ---------- 补充：阴影 / 字号 / 布局尺寸（非契约） ---------- */
+  --shadow-sm: 0 1px 2px var(--c-shadow);
+  --shadow-md: 0 1px 2px var(--c-shadow), 0 4px 14px var(--c-shadow);
+  --shadow-lg: 0 2px 6px var(--c-shadow), 0 12px 32px rgba(24, 48, 84, 0.14);
+  --focus-ring: 0 0 0 3px rgba(26, 95, 180, 0.22);
+
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-base: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 20px;
+
+  --topbar-h:    64px;
+  --bottombar-h: 210px;
+  --left-w:      320px;
+  --right-w:     360px;
+  --rail-mini-w: 56px;
+  --gutter:      12px;
+  --drawer-w:    400px;
+}
+
+
+/* ==========================================================================
+   2. Reset
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;              /* 页面级不滚动 */
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  color: var(--c-text);
+  background: var(--c-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6, p, ul, ol, li, figure, dl, dd { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+img, svg, canvas { display: block; max-width: 100%; }
+svg { flex-shrink: 0; }
+table { border-collapse: collapse; border-spacing: 0; }
+em, i { font-style: normal; }
+b, strong { font-weight: 700; }
+small { font-size: .75em; }
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+}
+button {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+button:disabled { cursor: not-allowed; }
+label { cursor: pointer; }
+
+kbd {
+  font-family: var(--font-num);
+  font-size: var(--fs-xs);
+}
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 2px;
+}
+
+::selection { background: var(--c-primary-soft); color: var(--c-text); }
+
+
+/* ==========================================================================
+   3. 排版
+   ========================================================================== */
+h1 { font-size: var(--fs-xl); font-weight: 700; line-height: 1.25; }
+h2 { font-size: 18px;         font-weight: 700; line-height: 1.3; }
+h3 { font-size: var(--fs-base); font-weight: 700; line-height: 1.4; }
+h4 { font-size: var(--fs-md); font-weight: 700; line-height: 1.4; }
+
+/* 所有数字统一等宽 */
+body,
+.num,
+[class*="value"],
+[class*="count"],
+time {
+  font-variant-numeric: tabular-nums;
+}
+.num { font-family: var(--font-num); }
+
+.t-free  { color: var(--road-free-text); }
+.t-slow  { color: var(--road-slow-text); }
+.t-jam   { color: var(--road-jam-text); }
+.t-block { color: var(--road-block-text); }
+.is-good { color: var(--c-success); }
+.is-bad  { color: var(--c-danger); }
+
+
+/* ==========================================================================
+   4. 通用 SVG 图标（线性，currentColor）
+   ========================================================================== */
+svg.i {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+svg.i .i-fill { fill: currentColor; stroke: none; }
+
+
+/* ==========================================================================
+   5. 全局状态工具类（§3.1）
+   ========================================================================== */
+.is-hidden { display: none !important; }
+
+.is-disabled,
+[disabled] {
+  opacity: .45 !important;
+  pointer-events: none !important;
+  filter: grayscale(.35);
+  cursor: not-allowed;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+
+/* ==========================================================================
+   6. 自定义滚动条（§4-18）
+   ========================================================================== */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cdd6e1 transparent;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #cdd6e1;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: #a9b6c7; background-clip: padding-box; }
+::-webkit-scrollbar-corner { background: transparent; }
+
+
+/* ==========================================================================
+   7. 减弱动效
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

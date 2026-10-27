@@ -1,0 +1,16 @@
+{
+  "elapsed_seconds": 3842.579219341278,
+  "peak_cuda_allocated_bytes": 4110586368,
+  "run_dir": "C:\\Users\\32073\\Documents\\Codex\\2026-10-18\\dronevehicle-rgb-thermal-d-train-1\\outputs\\dronevehicle_baselines\\runs\\full_rgb",
+  "epochs_requested": 80,
+  "schedule_epochs": 100,
+  "epoch_budget_policy": "complete target epochs using unchanged schedule horizon",
+  "timing_scope": "current process segment only; see runtime_notes.json for interruptions and prior segments",
+  "epochs_completed": 80,
+  "finite_training_losses": true,
+  "training_completed": true,
+  "best_sha256": "a7723ecf6ce1129c198f7561fccf1650a8b877b45c4659381a6518076de69dc6",
+  "comparison_epochs": 60,
+  "weights_scope": "saved best/last from first60; full training history has80 epochs",
+  "selection_record": "reports/rgb_prefix60_selection.json"
+}

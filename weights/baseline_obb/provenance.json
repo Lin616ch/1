@@ -1,0 +1,8 @@
+{
+  "url": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8n-obb.pt",
+  "bytes": 6567590,
+  "sha256": "fa6e4cd2691f132875c143135affaa66b5d89394ebb1d07d19770a9b6382c1b8",
+  "model": "YOLOv8n-OBB",
+  "pretraining": "DOTA; official Ultralytics release asset",
+  "initialization_policy": "both modalities independently load this identical file"
+}

@@ -1,0 +1,69 @@
+{
+  "summary": {
+    "modality": "thermal",
+    "phase": "full",
+    "split": "official_val",
+    "status": "completed",
+    "precision": 0.781911139593819,
+    "recall": 0.7822446363862515,
+    "mAP50": 0.83021079752722,
+    "mAP50_95": 0.6727848562130412,
+    "initial_weight_sha256": "fa6e4cd2691f132875c143135affaa66b5d89394ebb1d07d19770a9b6382c1b8",
+    "run_dir": "C:\\Users\\32073\\Documents\\Codex\\2026-10-18\\dronevehicle-rgb-thermal-d-train-1\\outputs\\dronevehicle_baselines\\runs\\full_thermal_val_evaluation",
+    "evaluation": "Ultralytics OBB ProbIoU similarity; AP thresholds 0.50:0.05:0.95; not official DroneVehicle/DOTA polygon evaluator",
+    "comparison_epochs": 60,
+    "actual_training_epochs": 60,
+    "schedule_epochs": 100,
+    "selection_record": null,
+    "evaluated_targets_per_class": [
+      20547,
+      1466,
+      789,
+      721,
+      917
+    ]
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "name": "car",
+      "precision": 0.9269734143571943,
+      "recall": 0.9696306030077384,
+      "AP50": 0.9837130468227558,
+      "AP50_95": 0.8146107300191471
+    },
+    {
+      "class_id": 1,
+      "name": "truck",
+      "precision": 0.7186330288168215,
+      "recall": 0.7046384720327421,
+      "AP50": 0.7811691589676214,
+      "AP50_95": 0.5956715896740297
+    },
+    {
+      "class_id": 2,
+      "name": "bus",
+      "precision": 0.8950384032232181,
+      "recall": 0.9518377693282636,
+      "AP50": 0.967854881019086,
+      "AP50_95": 0.8166004728960742
+    },
+    {
+      "class_id": 3,
+      "name": "van",
+      "precision": 0.6268753148826799,
+      "recall": 0.5918694552397228,
+      "AP50": 0.6463849613867663,
+      "AP50_95": 0.5262077107740806
+    },
+    {
+      "class_id": 4,
+      "name": "freight_car",
+      "precision": 0.7420355366891813,
+      "recall": 0.6932468823227912,
+      "AP50": 0.7719319394398698,
+      "AP50_95": 0.6108337777018733
+    }
+  ],
+  "classes_without_ground_truth": "omitted, never replaced by zero"
+}

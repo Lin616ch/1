@@ -1,0 +1,962 @@
+/* ==== components.css · Part 1/4 · 基础工具 / 滚动条 / 加载页 / 顶栏 / 面板套件 ==== */
+/* 依赖：css/theme.css（设计令牌 + reset）、css/layout.css（外壳栅格）。
+   本文件不复写布局尺寸，顶栏高度等一律以 --topbar-h / layout.css 实际取值为准。 */
+
+
+/* ==========================================================================
+   1. 全局状态工具类 · 契约 §3.1
+   ========================================================================== */
+
+/* 全局唯一一处定义；!important 保证能盖过任何 display（含 flex/grid/inline-*） */
+.is-hidden {
+  display: none !important;
+}
+
+
+/* ==========================================================================
+   2. 自定义滚动条 · 契约 §4-18（细 / 浅灰 / 圆角）
+   --------------------------------------------------------------------------
+   theme.css §6 已给过一套通用兜底；此处针对面板内部滚动条做一次细化，
+   数值与令牌对齐，并补齐 Firefox(scrollbar-width/scrollbar-color) 与
+   WebKit 的 hover / active / corner 全部状态。后加载者胜出，不产生冲突。
+   ========================================================================== */
+
+.panel,
+.panel-body,
+.drawer-body,
+#drawer-body,
+#corridor-rank,
+#layer-list,
+#region-list,
+#view-modes,
+#kpi-cards,
+#map-legend,
+.data-table-wrap,
+.table-wrap {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border-strong, #c3cedc) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--c-border-strong, #c3cedc);
+  border-radius: 3px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a9b6c7;              /* 无对应令牌：中性灰加强，非语义色 */
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--c-text-dim, #687588);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 滚动容器底部留一点呼吸，避免最后一行贴边 */
+.panel-body::-webkit-scrollbar-track,
+#corridor-rank::-webkit-scrollbar-track {
+  margin-block: var(--space-1, 4px);
+}
+
+
+/* ==========================================================================
+   3. 加载页 #loading-screen · 契约 §4-17
+   政务风：浅灰蓝底 + 白色卡片 + 徽标 + 主色进度条 + 呼吸动画
+   ========================================================================== */
+
+#loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(900px 460px at 50% 8%, rgba(26, 95, 180, .10), transparent 68%),
+    linear-gradient(180deg, #ffffff 0%, var(--c-bg, #eef2f7) 62%, #e6ecf4 100%);
+  transition: opacity 400ms var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              visibility 0s linear 0s;
+}
+
+/* ---- 卡片 ---- */
+.loading-card {
+  position: relative;
+  width: 460px;
+  max-width: calc(100vw - 48px);
+  padding: 40px 44px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--c-panel, #ffffff);
+  border: 1px solid var(--c-border, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-lg, 0 12px 32px rgba(24, 48, 84, .14));
+  animation: load-card-in var(--dur-slow, 360ms) var(--ease, cubic-bezier(.4, 0, .2, 1)) both;
+}
+
+/* 卡片顶部 3px 主色条（与 #bottombar 同语言的政务线） */
+.loading-card::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -1px;
+  width: 72px;
+  height: 3px;
+  margin-left: -36px;
+  border-radius: 0 0 2px 2px;
+  background: var(--c-primary, #1a5fb4);
+}
+
+@keyframes load-card-in {
+  from { opacity: 0; transform: translateY(10px) scale(.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---- 徽标（呼吸动画）---- */
+.loading-logo {
+  width: 60px;
+  height: 60px;
+  margin-bottom: var(--space-4, 16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg, 12px);
+  background: var(--c-primary-weak, #e8f0fb);
+  box-shadow: 0 0 0 1px var(--c-border, #e2e8f0) inset;
+  animation: load-breath 2.4s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+.loading-logo > svg {
+  display: block;
+  width: 42px;
+  height: 42px;
+}
+
+@keyframes load-breath {
+  0%, 100% { transform: scale(1);     box-shadow: 0 0 0 1px var(--c-border, #e2e8f0) inset, 0 0 0 0 rgba(26, 95, 180, .16); }
+  50%      { transform: scale(1.045); box-shadow: 0 0 0 1px var(--c-border, #e2e8f0) inset, 0 0 0 10px rgba(26, 95, 180, 0); }
+}
+
+/* ---- 文案 ---- */
+.loading-title {
+  font-size: var(--fs-lg, 16px);
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--c-text, #1c2738);
+}
+
+.loading-sub {
+  margin-top: var(--space-1, 4px);
+  font-size: var(--fs-sm, 12px);
+  color: var(--c-text-dim, #687588);
+}
+
+/* ---- 进度条 ---- */
+.loading-progress {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  margin: var(--space-5, 24px) 0 var(--space-3, 12px);
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--c-bg-sub, #f5f7fa);
+  box-shadow: 0 0 0 1px var(--c-border, #e2e8f0) inset;
+}
+
+.loading-bar {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg,
+    var(--c-primary, #1a5fb4) 0%,
+    var(--c-primary-mid, #3d7fd6) 62%,
+    var(--c-accent, #0e9fb5) 100%);
+  box-shadow: 0 0 8px rgba(26, 95, 180, .28);
+}
+
+/* 无 .has-progress：自走假进度（宽度 0 → 100% 往复，节奏有快有慢） */
+#loading-screen:not(.has-progress) .loading-bar {
+  animation: load-fake 2.6s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+/* 进度条上的柔光扫过，避免整页显得静止 */
+.loading-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, .55) 50%,
+    transparent 100%);
+  transform: translateX(-100%);
+  animation: load-sheen 1.9s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes load-fake {
+  0%   { width: 0;    opacity: 1; }
+  18%  { width: 34%; }
+  42%  { width: 52%; }
+  70%  { width: 84%; }
+  88%  { width: 94%;  opacity: 1; }
+  100% { width: 100%; opacity: .35; }
+}
+
+@keyframes load-sheen {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 有 .has-progress：由 CSS 变量 --load 驱动（如 --load: 60%） */
+#loading-screen.has-progress .loading-bar {
+  width: var(--load, var(--_load, 0%));
+  transition: width var(--dur-slow, 360ms) var(--ease, cubic-bezier(.4, 0, .2, 1));
+}
+
+#loading-screen.has-progress .loading-progress::after {
+  animation: none;
+  opacity: 0;
+}
+
+/* ---- 文案节点 .loading-text ---- */
+.loading-text {
+  min-height: 20px;
+  font-size: var(--fs-sm, 12px);
+  color: var(--c-text-sub, #4a5a6e);
+  animation: load-text-breath 1.8s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+@keyframes load-text-breath {
+  0%, 100% { opacity: .58; }
+  50%      { opacity: 1; }
+}
+
+/* ---- 步骤点 ---- */
+.loading-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2, 8px) var(--space-3, 12px);
+  margin-top: var(--space-4, 16px);
+}
+
+.loading-steps > li {
+  position: relative;
+  padding-left: 14px;
+  font-size: var(--fs-xs, 11px);
+  color: var(--c-text-dim, #687588);
+  transition: color var(--dur-base, 220ms) var(--ease, cubic-bezier(.4, 0, .2, 1));
+}
+
+.loading-steps > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: var(--c-border-strong, #c3cedc);
+}
+
+.loading-steps > li.is-done {
+  color: var(--c-success, #12804a);
+}
+
+.loading-steps > li.is-done::before {
+  background: var(--c-success, #12804a);
+}
+
+.loading-steps > li.is-active {
+  color: var(--c-primary, #1a5fb4);
+  font-weight: 700;
+}
+
+.loading-steps > li.is-active::before {
+  background: var(--c-primary, #1a5fb4);
+  animation: load-dot 1.4s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+@keyframes load-dot {
+  0%, 100% { transform: scale(1);   box-shadow: 0 0 0 0 rgba(26, 95, 180, .30); }
+  70%      { transform: scale(1.1); box-shadow: 0 0 0 7px rgba(26, 95, 180, 0); }
+}
+
+.loading-foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+  text-align: center;
+  font-size: var(--fs-xs, 11px);
+  letter-spacing: 1px;
+  color: var(--c-text-dim, #687588);
+}
+
+/* ---- .is-done：整体淡出 + 停用交互 ---- */
+#loading-screen.is-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 400ms var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              visibility 0s linear 400ms;
+}
+
+#loading-screen.is-done .loading-card,
+#loading-screen.is-done .loading-logo,
+#loading-screen.is-done .loading-text,
+#loading-screen.is-done .loading-bar,
+#loading-screen.is-done .loading-progress::after,
+#loading-screen.is-done .loading-steps > li::before {
+  animation: none;
+}
+
+
+/* ==========================================================================
+   4. 顶栏 · 契约 §4-1
+   ========================================================================== */
+
+/* ---- 品牌区 ---- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.brand-mark {
+  position: relative;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md, 8px);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(24, 48, 84, .08));
+  transition: transform var(--dur-base, 220ms) var(--ease, cubic-bezier(.4, 0, .2, 1));
+}
+
+.brand-mark > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.brand-mark:hover {
+  transform: translateY(-1px);
+}
+
+/* 徽标内部图形（index.html 内联 SVG 的 class 钩子） */
+.brand-mark .bm-bg,
+.loading-logo .bm-bg {
+  fill: var(--c-primary, #1a5fb4);
+  stroke: none;
+}
+
+.brand-mark .bm-bld,
+.loading-logo .bm-bld {
+  fill: #ffffff;
+  opacity: .92;
+  stroke: none;
+}
+
+.brand-mark .bm-bld--hi,
+.loading-logo .bm-bld--hi {
+  fill: #ffffff;
+  opacity: 1;
+}
+
+.brand-mark .bm-road,
+.loading-logo .bm-road {
+  fill: none;
+  stroke: var(--c-accent, #0e9fb5);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.brand-mark .bm-node,
+.loading-logo .bm-node {
+  fill: #ffffff;
+  stroke: var(--c-primary, #1a5fb4);
+  stroke-width: 1.2;
+}
+
+.brand-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand-title {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: .5px;
+  color: var(--c-text, #1c2738);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-sub {
+  margin-top: 1px;
+  font-size: var(--fs-xs, 11px);
+  line-height: 1.3;
+  letter-spacing: .3px;
+  color: var(--c-text-dim, #687588);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- KPI 滚动条 #kpi-ticker ---- */
+#kpi-ticker {
+  flex: 1 1 auto;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+}
+
+/* 首选结构：#kpi-ticker > .ticker-track > .ticker-item×N（首尾各一组，无缝循环） */
+.ticker-track {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: max-content;
+  will-change: transform;
+  animation: ticker-marquee 42s linear infinite;
+}
+
+/* hover 暂停（悬停到任一子项上同样生效，冒泡到轨道） */
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* 无缝循环：轨道内为首尾两份相同内容，位移半宽即回到起点 */
+@keyframes ticker-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ---- 单条 KPI ---- */
+.ticker-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2, 8px);
+  padding: 0 var(--space-5, 24px);
+  position: relative;
+  font-size: var(--fs-md, 13px);
+  line-height: 1.4;
+  color: var(--c-text, #1c2738);
+  cursor: default;
+}
+
+/* 条目之间的浅色分隔点 */
+.ticker-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 50%;
+  background: var(--c-border-strong, #c3cedc);
+}
+
+.ticker-item:first-child::before {
+  display: none;
+}
+
+.ticker-label {
+  font-size: var(--fs-sm, 12px);
+  color: var(--c-text-sub, #4a5a6e);
+  letter-spacing: .2px;
+}
+
+.ticker-value {
+  font-family: var(--font-num, monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-base, 14px);
+  font-weight: 700;
+  color: var(--c-primary, #1a5fb4);
+  white-space: nowrap;
+}
+
+.ticker-value > small {
+  margin-left: 2px;
+  font-family: var(--font-ui, sans-serif);
+  font-size: var(--fs-xs, 11px);
+  font-weight: 400;
+  color: var(--c-text-dim, #687588);
+}
+
+/* 告警条目：数值转危险色 + 呼吸，不依赖深色底 */
+.ticker-item.is-alert .ticker-value {
+  color: var(--c-danger, #c9252c);
+  animation: ticker-alert 1.8s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+.ticker-item.is-alert .ticker-label {
+  color: var(--c-text, #1c2738);
+}
+
+.ticker-item.is-alert::before {
+  background: var(--c-danger, #c9252c);
+  box-shadow: 0 0 0 3px var(--c-danger-weak, #fbe9ea);
+}
+
+@keyframes ticker-alert {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .62; }
+}
+
+/* ---- 降级结构：#kpi-ticker > .ticker-item（无 .ticker-track）----
+   直挂条目同样横向排布、不换行；条目较多时会自然溢出并被容器的
+   overflow:hidden 裁切，表现与滚动条一致（不依赖 :has() 等高版本特性）。 */
+#kpi-ticker > .ticker-item {
+  flex: 0 0 auto;
+  width: max-content;
+}
+
+#kpi-ticker > .ticker-item:first-child::before {
+  display: none;
+}
+
+/* ---- 顶栏右侧 ---- */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* ---- .chip / #weather-chip ---- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--c-border, #e2e8f0);
+  border-radius: 15px;
+  background: var(--c-bg-sub, #f5f7fa);
+  font-size: var(--fs-sm, 12px);
+  color: var(--c-text-sub, #4a5a6e);
+  white-space: nowrap;
+  transition: border-color var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              background var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              color var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1));
+}
+
+.chip > svg.i {
+  width: 15px;
+  height: 15px;
+  color: var(--c-primary, #1a5fb4);
+}
+
+.chip > em {
+  font-size: var(--fs-xs, 11px);
+  color: var(--c-text-dim, #687588);
+  padding-left: var(--space-2, 8px);
+  border-left: 1px solid var(--c-border, #e2e8f0);
+}
+
+.chip:hover {
+  background: var(--c-panel, #ffffff);
+  border-color: var(--c-border-strong, #c3cedc);
+  color: var(--c-text, #1c2738);
+}
+
+#weather-chip {
+  cursor: default;
+}
+
+#weather-chip > em {
+  font-style: normal;
+}
+
+/* ---- 时钟双行 ---- */
+#sys-clock {
+  font-family: var(--font-num, monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: .5px;
+  color: var(--c-primary, #1a5fb4);
+  white-space: nowrap;
+}
+
+#sys-date {
+  font-size: var(--fs-xs, 11px);
+  line-height: 1.3;
+  color: var(--c-text-dim, #687588);
+  white-space: nowrap;
+}
+
+/* ---- 顶栏图标按钮 ---- */
+#btn-theme,
+#btn-fullscreen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--c-border, #e2e8f0);
+  background: var(--c-panel, #ffffff);
+  color: var(--c-text-sub, #4a5a6e);
+  transition: background var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              border-color var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              color var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              transform var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1));
+}
+
+#btn-theme > svg.i,
+#btn-fullscreen > svg.i {
+  width: 18px;
+  height: 18px;
+}
+
+#btn-theme:hover,
+#btn-fullscreen:hover {
+  color: var(--c-primary, #1a5fb4);
+  border-color: var(--c-border-strong, #c3cedc);
+  background: var(--c-hover, #f3f6fb);
+}
+
+#btn-theme:active,
+#btn-fullscreen:active {
+  transform: scale(.96);
+  background: var(--c-primary-weak, #e8f0fb);
+}
+
+#btn-theme:focus-visible,
+#btn-fullscreen:focus-visible {
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(26, 95, 180, .22));
+}
+
+/* 全屏中：按钮呈主色选中态（JS 只需切换 .is-active） */
+#btn-fullscreen.is-active {
+  color: var(--c-panel, #ffffff);
+  background: var(--c-primary, #1a5fb4);
+  border-color: var(--c-primary, #1a5fb4);
+}
+
+/* 主题按钮选中态 */
+#btn-theme.is-active {
+  color: var(--c-primary, #1a5fb4);
+  background: var(--c-primary-weak, #e8f0fb);
+  border-color: var(--c-primary-soft, #d3e2f7);
+}
+
+
+/* ==========================================================================
+   5. 面板套件 · 契约 §4-2
+   ========================================================================== */
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--c-panel, #ffffff);
+  border: 1px solid var(--c-border, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(24, 48, 84, .08));
+  transition: box-shadow var(--dur-base, 220ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              border-color var(--dur-base, 220ms) var(--ease, cubic-bezier(.4, 0, .2, 1));
+}
+
+.panel:hover {
+  box-shadow: var(--shadow-md, 0 1px 2px rgba(24, 48, 84, .08), 0 4px 14px rgba(24, 48, 84, .08));
+}
+
+/* ---- 面板标题栏 ---- */
+.panel-head {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2, 8px);
+  height: 42px;
+  padding: 0 var(--space-4, 16px) 0 var(--space-3, 12px);
+  background: var(--c-panel-head, #fbfcfe);
+  border-bottom: 1px solid var(--c-border, #e2e8f0);
+}
+
+/* ---- 面板标题（左侧竖色条）---- */
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  min-width: 0;
+  padding-left: 11px;
+  font-size: var(--fs-base, 14px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: .3px;
+  color: var(--c-text, #1c2738);
+}
+
+.panel-title::before {
+  content: "";
+  position: absolute;
+  left: var(--space-3, 12px);
+  top: 50%;
+  width: 3px;
+  height: 14px;
+  margin-top: -7px;
+  border-radius: 2px;
+  background: var(--c-primary, #1a5fb4);
+}
+
+.panel-title > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel-ico {
+  width: 16px;
+  height: 16px;
+  color: var(--c-primary, #1a5fb4);
+  flex: 0 0 auto;
+}
+
+/* ---- 工具区 ---- */
+.panel-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  flex: 0 0 auto;
+  min-width: 0;
+  color: var(--c-text-dim, #687588);
+  font-size: var(--fs-xs, 11px);
+  white-space: nowrap;
+}
+
+.panel-tools > .panel-meta {
+  color: var(--c-text-dim, #687588);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 实时指示点 */
+.panel-tools > .live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--c-success, #12804a);
+  animation: live-pulse 1.8s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1;  box-shadow: 0 0 0 0 rgba(18, 128, 74, .30); }
+  70%      { opacity: .7; box-shadow: 0 0 0 6px rgba(18, 128, 74, 0); }
+}
+
+/* ---- 面板内容区（内部滚动）---- */
+.panel-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+/* 列表型内容（滚动项自带内距） */
+#layer-list,
+#region-list,
+#view-modes,
+#kpi-cards,
+#corridor-rank {
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+}
+
+#kpi-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+/* 图表型面板：主体不滚动，交给 canvas 自适应 */
+.panel--chart > .panel-body {
+  overflow: hidden;
+  padding: var(--space-2, 8px) var(--space-2, 8px) var(--space-1, 4px);
+}
+
+/* 有 data-empty 的空状态：柔和占位文案（JS 填充内容后自动消失） */
+.panel-body[data-empty]:empty::before {
+  content: attr(data-empty);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 var(--space-4, 16px);
+  text-align: center;
+  font-size: var(--fs-sm, 12px);
+  color: var(--c-text-dim, #687588);
+  letter-spacing: .3px;
+  pointer-events: none;
+}
+
+/* 完全空白的面板体：给一条柔和的点阵占位，避免"死白" */
+.panel-body:empty:not([data-empty])::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 46px;
+  height: 6px;
+  margin: -3px 0 0 -23px;
+  border-radius: 3px;
+  background: linear-gradient(90deg,
+    var(--c-border, #e2e8f0) 0%, var(--c-border, #e2e8f0) 26%,
+    transparent 26%, transparent 37%,
+    var(--c-border, #e2e8f0) 37%, var(--c-border, #e2e8f0) 63%,
+    transparent 63%, transparent 74%,
+    var(--c-border, #e2e8f0) 74%, var(--c-border, #e2e8f0) 100%);
+  opacity: .9;
+  pointer-events: none;
+}
+
+/* ---- 加载态 .is-loading：骨架 + 呼吸 ---- */
+.panel.is-loading {
+  animation: panel-breath 1.6s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+.panel.is-loading > .panel-body > * {
+  visibility: hidden;
+}
+
+.panel.is-loading > .panel-body::before {
+  content: "";
+  position: absolute;
+  inset: var(--space-3, 12px) var(--space-4, 16px);
+  border-radius: var(--radius-sm, 4px);
+  background:
+    linear-gradient(var(--c-bg-sub, #f5f7fa) 0 0) 0 0 / 100% 12px no-repeat,
+    linear-gradient(var(--c-bg-sub, #f5f7fa) 0 0) 0 26px / 72% 12px no-repeat,
+    linear-gradient(var(--c-bg-sub, #f5f7fa) 0 0) 0 52px / 88% 12px no-repeat,
+    linear-gradient(var(--c-bg-sub, #f5f7fa) 0 0) 0 78px / 54% 12px no-repeat;
+  animation: skeleton-sheen 1.5s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+.panel.is-loading > .panel-head::after {
+  content: "";
+  position: absolute;
+  right: var(--space-4, 16px);
+  top: 50%;
+  width: 44px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 4px;
+  background: var(--c-bg-sub, #f5f7fa);
+  animation: skeleton-sheen 1.5s var(--ease, cubic-bezier(.4, 0, .2, 1)) infinite;
+}
+
+@keyframes panel-breath {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .74; }
+}
+
+@keyframes skeleton-sheen {
+  0%   { opacity: .55; }
+  50%  { opacity: 1; }
+  100% { opacity: .55; }
+}
+
+/* 面板内列表项的空态提示（无内容时的一条淡文案位） */
+.panel-body > .is-empty {
+  padding: var(--space-5, 24px) 0;
+  text-align: center;
+  font-size: var(--fs-sm, 12px);
+  color: var(--c-text-dim, #687588);
+}
+
+
+/* ==========================================================================
+   6. 补充：契约/分工表未列出、但 index.html 实际使用且无其他块负责的 class
+   （详见交付说明；均为顶栏 + 加载页的直属元素，实现在此最合理）
+   ========================================================================== */
+
+/* .icon-btn —— 顶栏 #btn-theme / #btn-fullscreen 与抽屉 #drawer-close 共用 */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--c-border, #e2e8f0);
+  background: var(--c-panel, #ffffff);
+  color: var(--c-text-sub, #4a5a6e);
+  transition: background var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              border-color var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              color var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1)),
+              transform var(--dur-fast, 160ms) var(--ease, cubic-bezier(.4, 0, .2, 1));
+}
+
+.icon-btn > svg.i {
+  width: 18px;
+  height: 18px;
+}
+
+.icon-btn:hover {
+  color: var(--c-primary, #1a5fb4);
+  border-color: var(--c-border-strong, #c3cedc);
+  background: var(--c-hover, #f3f6fb);
+}
+
+.icon-btn:active {
+  transform: scale(.96);
+}
+
+.icon-btn:focus-visible {
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(26, 95, 180, .22));
+}
+
+.icon-btn.is-disabled,
+.icon-btn:disabled {
+  pointer-events: none;
+}

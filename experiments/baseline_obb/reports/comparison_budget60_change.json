@@ -1,0 +1,17 @@
+{
+  "authorized_utc": "2026-10-19T12:19:46.518680+00:00",
+  "authorization": "User selected 改为两路60轮对比，优先交付",
+  "comparison_epochs": 60,
+  "schedule_epochs": 100,
+  "rgb_actual_training_epochs": 80,
+  "rgb_selection": "reports/rgb_prefix60_selection.json",
+  "thermal_policy": "continue its independent pretrained run; stop after exactly60 completed epochs",
+  "test_used_for_budget_or_selection": false,
+  "thermal_resume_verified_utc": "2026-10-19T12:23:04.596539+00:00",
+  "pipeline_pid": 3432,
+  "exec_session": 65962,
+  "keep_awake_exec_session": 30693,
+  "thermal_resume_completed_epochs": 10,
+  "thermal_target_epochs": 60,
+  "rgb_selected60_independent_validation_completed": true
+}
